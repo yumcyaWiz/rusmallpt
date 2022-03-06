@@ -223,4 +223,23 @@ mod tests {
     let v2 = Vec3::new(4.0, 5.0, 6.0);
     assert_eq!(dot(&v1, &v2), 32.0);
   }
+
+  #[test]
+  fn vec3_length() {
+    let v = Vec3::new(1.0, 2.0, 3.0);
+    assert_eq!(length(&v), (14 as Real).sqrt());
+  }
+
+  #[test]
+  fn vec3_length2() {
+    let v = Vec3::new(1.0, 2.0, 3.0);
+    assert_eq!(length2(&v), (14 as Real));
+  }
+
+  #[test]
+  fn vec3_cross() {
+    let v1 = Vec3::new(1.0, 0.0, 0.0);
+    let v2 = Vec3::new(0.0, 1.0, 0.0);
+    assert_eq!(cross(&v1, &v2), Vec3::new(0.0, 0.0, 1.0));
+  }
 }
