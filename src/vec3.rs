@@ -2,6 +2,7 @@ use std::ops::{Add, Div, Mul, Sub};
 
 type Real = f32;
 
+#[derive(Debug, PartialEq)]
 struct Vec3 {
   elements: [Real; 3],
 }
@@ -29,7 +30,7 @@ impl Vec3 {
 fn dot(v1: &Vec3, v2: &Vec3) -> Real {
   let mut sum: Real = 0.0;
   for (k, _) in v1.elements.iter().enumerate() {
-    sum += v1.elements[k] + v2.elements[k];
+    sum += v1.elements[k] * v2.elements[k];
   }
   sum
 }
@@ -158,10 +159,68 @@ impl Div for Vec3 {
 
 #[cfg(test)]
 mod tests {
+  use crate::vec3::*;
+
   #[test]
   fn vec3_add() {
-    let v1 = Vec3::new(0, 1, 2);
-    let v2 = Vec3::new(3, 4, 5);
-    assert_eq!(v1 + v2, Vec3(4, 5, 7));
+    let v1 = Vec3::new(1.0, 2.0, 3.0);
+    let v2 = Vec3::new(4.0, 5.0, 6.0);
+    assert_eq!(v1 + v2, Vec3::new(5.0, 7.0, 9.0));
+  }
+
+  #[test]
+  fn vec3_sub() {
+    let v1 = Vec3::new(1.0, 2.0, 3.0);
+    let v2 = Vec3::new(4.0, 5.0, 6.0);
+    assert_eq!(v1 - v2, Vec3::new(-3.0, -3.0, -3.0));
+  }
+
+  #[test]
+  fn vec3_mul_vec_scalar() {
+    let v1 = Vec3::new(1.0, 2.0, 3.0);
+    let v2 = 3.0;
+    assert_eq!(v1 * v2, Vec3::new(3.0, 6.0, 9.0));
+  }
+
+  #[test]
+  fn vec3_mul_scalar_vec() {
+    let v1 = 3.0;
+    let v2 = Vec3::new(1.0, 2.0, 3.0);
+    assert_eq!(v1 * v2, Vec3::new(3.0, 6.0, 9.0));
+  }
+
+  #[test]
+  fn vec3_mul_vec_vec() {
+    let v1 = Vec3::new(1.0, 2.0, 3.0);
+    let v2 = Vec3::new(4.0, 5.0, 6.0);
+    assert_eq!(v1 * v2, Vec3::new(4.0, 10.0, 18.0));
+  }
+
+  #[test]
+  fn vec3_div_vec_scalar() {
+    let v1 = Vec3::new(1.0, 2.0, 4.0);
+    let v2 = 2.0;
+    assert_eq!(v1 / v2, Vec3::new(0.5, 1.0, 2.0));
+  }
+
+  #[test]
+  fn vec3_div_scalar_vec() {
+    let v1 = 2.0;
+    let v2 = Vec3::new(1.0, 2.0, 4.0);
+    assert_eq!(v1 / v2, Vec3::new(2.0, 1.0, 0.5));
+  }
+
+  #[test]
+  fn vec3_div_vec_vec() {
+    let v1 = Vec3::new(1.0, 2.0, 4.0);
+    let v2 = Vec3::new(2.0, 4.0, 8.0);
+    assert_eq!(v1 / v2, Vec3::new(0.5, 0.5, 0.5));
+  }
+
+  #[test]
+  fn vec3_dot() {
+    let v1 = Vec3::new(1.0, 2.0, 3.0);
+    let v2 = Vec3::new(4.0, 5.0, 6.0);
+    assert_eq!(dot(&v1, &v2), 32.0);
   }
 }
