@@ -44,12 +44,12 @@ fn cross(v1: &Vec3, v2: &Vec3) -> Vec3 {
   }
 }
 
-fn length(v: &Vec3) {
-  dot(v, v).sqrt();
+fn length(v: &Vec3) -> Real {
+  dot(v, v).sqrt()
 }
 
-fn length2(v: &Vec3) {
-  dot(v, v);
+fn length2(v: &Vec3) -> Real {
+  dot(v, v)
 }
 
 // Vec3 + Vec3
@@ -153,5 +153,15 @@ impl Div for Vec3 {
       ret.elements[k] = v / rhs.elements[k];
     }
     ret
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  #[test]
+  fn vec3_add() {
+    let v1 = Vec3::new(0, 1, 2);
+    let v2 = Vec3::new(3, 4, 5);
+    assert_eq!(v1 + v2, Vec3(4, 5, 7));
   }
 }
