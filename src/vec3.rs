@@ -57,7 +57,33 @@ fn length2(v: &Vec3) -> Real {
 impl Add for Vec3 {
   type Output = Self;
 
+  fn add(self, rhs: Self) -> Self::Output {
+    let mut ret = Self::new(0.0, 0.0, 0.0);
+    for (k, v) in self.elements.iter().enumerate() {
+      ret.elements[k] = v + rhs.elements[k];
+    }
+    ret
+  }
+}
+
+// Vec3(ref) + Vec3
+impl Add<Vec3> for &Vec3 {
+  type Output = Vec3;
+
   fn add(self, rhs: Vec3) -> Self::Output {
+    let mut ret = Vec3::new(0.0, 0.0, 0.0);
+    for (k, v) in self.elements.iter().enumerate() {
+      ret.elements[k] = v + rhs.elements[k];
+    }
+    ret
+  }
+}
+
+// Vec3 + Vec3(ref)
+impl Add<&Vec3> for Vec3 {
+  type Output = Self;
+
+  fn add(self, rhs: &Vec3) -> Self::Output {
     let mut ret = Self::new(0.0, 0.0, 0.0);
     for (k, v) in self.elements.iter().enumerate() {
       ret.elements[k] = v + rhs.elements[k];
@@ -85,6 +111,32 @@ impl Sub for Vec3 {
 
   fn sub(self, rhs: Self) -> Self::Output {
     let mut ret = Self::new(0.0, 0.0, 0.0);
+    for (k, v) in self.elements.iter().enumerate() {
+      ret.elements[k] = v - rhs.elements[k];
+    }
+    ret
+  }
+}
+
+// Vec3(ref) - Vec3
+impl Sub<Vec3> for &Vec3 {
+  type Output = Vec3;
+
+  fn sub(self, rhs: Vec3) -> Self::Output {
+    let mut ret = Vec3::new(0.0, 0.0, 0.0);
+    for (k, v) in self.elements.iter().enumerate() {
+      ret.elements[k] = v - rhs.elements[k];
+    }
+    ret
+  }
+}
+
+// Vec3 - Vec3(ref)
+impl Sub<&Vec3> for Vec3 {
+  type Output = Self;
+
+  fn sub(self, rhs: &Vec3) -> Self::Output {
+    let mut ret = Vec3::new(0.0, 0.0, 0.0);
     for (k, v) in self.elements.iter().enumerate() {
       ret.elements[k] = v - rhs.elements[k];
     }
@@ -162,6 +214,32 @@ impl Mul for Vec3 {
   type Output = Self;
 
   fn mul(self, rhs: Self) -> Self::Output {
+    let mut ret = Self::new(0.0, 0.0, 0.0);
+    for (k, v) in self.elements.iter().enumerate() {
+      ret.elements[k] = v * rhs.elements[k];
+    }
+    ret
+  }
+}
+
+// Vec3(ref) * Vec3
+impl Mul<Vec3> for &Vec3 {
+  type Output = Vec3;
+
+  fn mul(self, rhs: Vec3) -> Self::Output {
+    let mut ret = Vec3::new(0.0, 0.0, 0.0);
+    for (k, v) in self.elements.iter().enumerate() {
+      ret.elements[k] = v * rhs.elements[k];
+    }
+    ret
+  }
+}
+
+// Vec3 * Vec3(ref)
+impl Mul<&Vec3> for Vec3 {
+  type Output = Self;
+
+  fn mul(self, rhs: &Vec3) -> Self::Output {
     let mut ret = Self::new(0.0, 0.0, 0.0);
     for (k, v) in self.elements.iter().enumerate() {
       ret.elements[k] = v * rhs.elements[k];
@@ -248,6 +326,32 @@ impl Div for Vec3 {
   }
 }
 
+// Vec3(ref) / Vec3
+impl Div<Vec3> for &Vec3 {
+  type Output = Vec3;
+
+  fn div(self, rhs: Vec3) -> Self::Output {
+    let mut ret = Vec3::new(0.0, 0.0, 0.0);
+    for (k, v) in self.elements.iter().enumerate() {
+      ret.elements[k] = v / rhs.elements[k];
+    }
+    ret
+  }
+}
+
+// Vec3 / Vec3(ref)
+impl Div<&Vec3> for Vec3 {
+  type Output = Self;
+
+  fn div(self, rhs: &Vec3) -> Self::Output {
+    let mut ret = Self::new(0.0, 0.0, 0.0);
+    for (k, v) in self.elements.iter().enumerate() {
+      ret.elements[k] = v / rhs.elements[k];
+    }
+    ret
+  }
+}
+
 // Vec3(ref) / Vec3(ref)
 impl Div for &Vec3 {
   type Output = Vec3;
@@ -266,28 +370,56 @@ mod tests {
   use crate::vec3::*;
 
   #[test]
-  fn vec3_add() {
+  fn vec3_val_val_add() {
     let v1 = Vec3::new(1.0, 2.0, 3.0);
     let v2 = Vec3::new(4.0, 5.0, 6.0);
     assert_eq!(v1 + v2, Vec3::new(5.0, 7.0, 9.0));
   }
 
   #[test]
-  fn vec3_ref_add() {
+  fn vec3_ref_val_add() {
+    let v1 = &Vec3::new(1.0, 2.0, 3.0);
+    let v2 = Vec3::new(4.0, 5.0, 6.0);
+    assert_eq!(v1 + v2, Vec3::new(5.0, 7.0, 9.0));
+  }
+
+  #[test]
+  fn vec3_val_ref_add() {
+    let v1 = Vec3::new(1.0, 2.0, 3.0);
+    let v2 = &Vec3::new(4.0, 5.0, 6.0);
+    assert_eq!(v1 + v2, Vec3::new(5.0, 7.0, 9.0));
+  }
+
+  #[test]
+  fn vec3_ref_ref_add() {
     let v1 = &Vec3::new(1.0, 2.0, 3.0);
     let v2 = &Vec3::new(4.0, 5.0, 6.0);
     assert_eq!(v1 + v2, Vec3::new(5.0, 7.0, 9.0));
   }
 
   #[test]
-  fn vec3_sub() {
+  fn vec3_val_val_sub() {
     let v1 = Vec3::new(1.0, 2.0, 3.0);
     let v2 = Vec3::new(4.0, 5.0, 6.0);
     assert_eq!(v1 - v2, Vec3::new(-3.0, -3.0, -3.0));
   }
 
   #[test]
-  fn vec3_ref_sub() {
+  fn vec3_ref_val_sub() {
+    let v1 = &Vec3::new(1.0, 2.0, 3.0);
+    let v2 = Vec3::new(4.0, 5.0, 6.0);
+    assert_eq!(v1 - v2, Vec3::new(-3.0, -3.0, -3.0));
+  }
+
+  #[test]
+  fn vec3_val_ref_sub() {
+    let v1 = Vec3::new(1.0, 2.0, 3.0);
+    let v2 = &Vec3::new(4.0, 5.0, 6.0);
+    assert_eq!(v1 - v2, Vec3::new(-3.0, -3.0, -3.0));
+  }
+
+  #[test]
+  fn vec3_ref_ref_sub() {
     let v1 = &Vec3::new(1.0, 2.0, 3.0);
     let v2 = &Vec3::new(4.0, 5.0, 6.0);
     assert_eq!(v1 - v2, Vec3::new(-3.0, -3.0, -3.0));
@@ -322,14 +454,28 @@ mod tests {
   }
 
   #[test]
-  fn vec3_mul_vec_vec() {
+  fn vec3_val_val_mul() {
     let v1 = Vec3::new(1.0, 2.0, 3.0);
     let v2 = Vec3::new(4.0, 5.0, 6.0);
     assert_eq!(v1 * v2, Vec3::new(4.0, 10.0, 18.0));
   }
 
   #[test]
-  fn vec3_ref_mul_vec_vec() {
+  fn vec3_ref_val_mul() {
+    let v1 = &Vec3::new(1.0, 2.0, 3.0);
+    let v2 = Vec3::new(4.0, 5.0, 6.0);
+    assert_eq!(v1 * v2, Vec3::new(4.0, 10.0, 18.0));
+  }
+
+  #[test]
+  fn vec3_val_ref_mul() {
+    let v1 = Vec3::new(1.0, 2.0, 3.0);
+    let v2 = &Vec3::new(4.0, 5.0, 6.0);
+    assert_eq!(v1 * v2, Vec3::new(4.0, 10.0, 18.0));
+  }
+
+  #[test]
+  fn vec3_ref_ref_mul() {
     let v1 = &Vec3::new(1.0, 2.0, 3.0);
     let v2 = &Vec3::new(4.0, 5.0, 6.0);
     assert_eq!(v1 * v2, Vec3::new(4.0, 10.0, 18.0));
@@ -364,14 +510,28 @@ mod tests {
   }
 
   #[test]
-  fn vec3_div_vec_vec() {
+  fn vec3_val_val_div() {
     let v1 = Vec3::new(1.0, 2.0, 4.0);
     let v2 = Vec3::new(2.0, 4.0, 8.0);
     assert_eq!(v1 / v2, Vec3::new(0.5, 0.5, 0.5));
   }
 
   #[test]
-  fn vec3_ref_div_vec_vec() {
+  fn vec3_ref_val_div() {
+    let v1 = &Vec3::new(1.0, 2.0, 4.0);
+    let v2 = Vec3::new(2.0, 4.0, 8.0);
+    assert_eq!(v1 / v2, Vec3::new(0.5, 0.5, 0.5));
+  }
+
+  #[test]
+  fn vec3_val_ref_div() {
+    let v1 = Vec3::new(1.0, 2.0, 4.0);
+    let v2 = &Vec3::new(2.0, 4.0, 8.0);
+    assert_eq!(v1 / v2, Vec3::new(0.5, 0.5, 0.5));
+  }
+
+  #[test]
+  fn vec3_ref_ref_div() {
     let v1 = &Vec3::new(1.0, 2.0, 4.0);
     let v2 = &Vec3::new(2.0, 4.0, 8.0);
     assert_eq!(v1 / v2, Vec3::new(0.5, 0.5, 0.5));
