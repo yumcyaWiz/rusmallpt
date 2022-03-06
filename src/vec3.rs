@@ -1,6 +1,6 @@
 use std::ops::{Add, Div, Mul, Sub};
 
-type Real = f32;
+use crate::types::Real;
 
 #[derive(Debug, PartialEq)]
 struct Vec3 {
