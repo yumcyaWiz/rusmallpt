@@ -53,317 +53,89 @@ fn length2(v: &Vec3) -> Real {
   dot(v, v)
 }
 
-// Vec3 + Vec3
-impl Add for Vec3 {
-  type Output = Self;
+macro_rules! impl_vec3_operator {
+  ($bound:ident, $func:ident, $lhs:ty, $op:tt, $rhs:ty) => {
+    impl $bound<$rhs> for $lhs {
+      type Output = Vec3;
 
-  fn add(self, rhs: Self) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v + rhs.elements[k];
+      fn $func(self, rhs: $rhs) -> Self::Output {
+        Vec3{
+          elements: [
+            self.elements[0] $op rhs.elements[0],
+            self.elements[1] $op rhs.elements[1],
+            self.elements[2] $op rhs.elements[2],
+          ]
+        }
+      }
     }
-    ret
-  }
+  };
 }
 
-// Vec3(ref) + Vec3
-impl Add<Vec3> for &Vec3 {
-  type Output = Vec3;
+macro_rules! impl_vec3_scalar_operator {
+  ($bound:ident, $func:ident, $lhs:ty, $op:tt, $rhs:ty) => {
+    impl $bound<$rhs> for $lhs {
+      type Output = Vec3;
 
-  fn add(self, rhs: Vec3) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v + rhs.elements[k];
+      fn $func(self, rhs: $rhs) -> Self::Output {
+        Vec3{
+          elements: [
+            self.elements[0] $op rhs,
+            self.elements[1] $op rhs,
+            self.elements[2] $op rhs,
+          ]
+        }
+      }
     }
-    ret
-  }
+  };
 }
 
-// Vec3 + Vec3(ref)
-impl Add<&Vec3> for Vec3 {
-  type Output = Self;
+macro_rules! impl_scalar_vec3_operator {
+  ($bound:ident, $func:ident, $lhs:ty, $op:tt, $rhs:ty) => {
+    impl $bound<$rhs> for $lhs {
+      type Output = Vec3;
 
-  fn add(self, rhs: &Vec3) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v + rhs.elements[k];
+      fn $func(self, rhs: $rhs) -> Self::Output {
+        Vec3{
+          elements: [
+            self $op rhs.elements[0],
+            self $op rhs.elements[1],
+            self $op rhs.elements[2],
+          ]
+        }
+      }
     }
-    ret
-  }
+  };
 }
 
-// Vec3(ref) + Vec3(ref)
-impl Add for &Vec3 {
-  type Output = Vec3;
+impl_vec3_operator!(Add, add, Vec3, +, Vec3);
+impl_vec3_operator!(Add, add, &Vec3, +, Vec3);
+impl_vec3_operator!(Add, add, Vec3, +, &Vec3);
+impl_vec3_operator!(Add, add, &Vec3, +, &Vec3);
 
-  fn add(self, rhs: Self) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v + rhs.elements[k];
-    }
-    ret
-  }
-}
+impl_vec3_operator!(Sub, sub, Vec3, -, Vec3);
+impl_vec3_operator!(Sub, sub, &Vec3, -, Vec3);
+impl_vec3_operator!(Sub, sub, Vec3, -, &Vec3);
+impl_vec3_operator!(Sub, sub, &Vec3, -, &Vec3);
 
-// Vec3 - Vec3
-impl Sub for Vec3 {
-  type Output = Self;
+impl_vec3_operator!(Mul, mul, Vec3, *, Vec3);
+impl_vec3_operator!(Mul, mul, &Vec3, *, Vec3);
+impl_vec3_operator!(Mul, mul, Vec3, *, &Vec3);
+impl_vec3_operator!(Mul, mul, &Vec3, *, &Vec3);
 
-  fn sub(self, rhs: Self) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v - rhs.elements[k];
-    }
-    ret
-  }
-}
+impl_vec3_operator!(Div, div, Vec3, /, Vec3);
+impl_vec3_operator!(Div, div, &Vec3, /, Vec3);
+impl_vec3_operator!(Div, div, Vec3, /, &Vec3);
+impl_vec3_operator!(Div, div, &Vec3, /, &Vec3);
 
-// Vec3(ref) - Vec3
-impl Sub<Vec3> for &Vec3 {
-  type Output = Vec3;
+impl_vec3_scalar_operator!(Mul, mul, Vec3, *, Real);
+impl_vec3_scalar_operator!(Mul, mul, &Vec3, *, Real);
+impl_scalar_vec3_operator!(Mul, mul, Real, *, Vec3);
+impl_scalar_vec3_operator!(Mul, mul, Real, *, &Vec3);
 
-  fn sub(self, rhs: Vec3) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v - rhs.elements[k];
-    }
-    ret
-  }
-}
-
-// Vec3 - Vec3(ref)
-impl Sub<&Vec3> for Vec3 {
-  type Output = Self;
-
-  fn sub(self, rhs: &Vec3) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v - rhs.elements[k];
-    }
-    ret
-  }
-}
-
-// Vec3(ref) - Vec3(ref)
-impl Sub for &Vec3 {
-  type Output = Vec3;
-
-  fn sub(self, rhs: Self) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v - rhs.elements[k];
-    }
-    ret
-  }
-}
-
-// Vec3 * Real
-impl Mul<Real> for Vec3 {
-  type Output = Self;
-
-  fn mul(self, rhs: Real) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v * rhs;
-    }
-    ret
-  }
-}
-
-// Vec3(ref) * Real
-impl Mul<Real> for &Vec3 {
-  type Output = Vec3;
-
-  fn mul(self, rhs: Real) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v * rhs;
-    }
-    ret
-  }
-}
-
-// Real * Vec3
-impl Mul<Vec3> for Real {
-  type Output = Vec3;
-
-  fn mul(self, rhs: Vec3) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in rhs.elements.iter().enumerate() {
-      ret.elements[k] = self * v;
-    }
-    ret
-  }
-}
-
-// Real * Vec3(ref)
-impl Mul<&Vec3> for Real {
-  type Output = Vec3;
-
-  fn mul(self, rhs: &Vec3) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in rhs.elements.iter().enumerate() {
-      ret.elements[k] = self * v;
-    }
-    ret
-  }
-}
-
-// Vec3 * Vec3
-impl Mul for Vec3 {
-  type Output = Self;
-
-  fn mul(self, rhs: Self) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v * rhs.elements[k];
-    }
-    ret
-  }
-}
-
-// Vec3(ref) * Vec3
-impl Mul<Vec3> for &Vec3 {
-  type Output = Vec3;
-
-  fn mul(self, rhs: Vec3) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v * rhs.elements[k];
-    }
-    ret
-  }
-}
-
-// Vec3 * Vec3(ref)
-impl Mul<&Vec3> for Vec3 {
-  type Output = Self;
-
-  fn mul(self, rhs: &Vec3) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v * rhs.elements[k];
-    }
-    ret
-  }
-}
-
-// Vec3(ref) * Vec3(ref)
-impl Mul for &Vec3 {
-  type Output = Vec3;
-
-  fn mul(self, rhs: Self) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v * rhs.elements[k];
-    }
-    ret
-  }
-}
-
-// Vec3 / Real
-impl Div<Real> for Vec3 {
-  type Output = Self;
-
-  fn div(self, rhs: Real) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v / rhs;
-    }
-    ret
-  }
-}
-
-// Vec3(ref) / Real
-impl Div<Real> for &Vec3 {
-  type Output = Vec3;
-
-  fn div(self, rhs: Real) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v / rhs;
-    }
-    ret
-  }
-}
-
-// Real / Vec3
-impl Div<Vec3> for Real {
-  type Output = Vec3;
-
-  fn div(self, rhs: Vec3) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in rhs.elements.iter().enumerate() {
-      ret.elements[k] = self / v;
-    }
-    ret
-  }
-}
-
-// Real / Vec3(ref)
-impl Div<&Vec3> for Real {
-  type Output = Vec3;
-
-  fn div(self, rhs: &Vec3) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in rhs.elements.iter().enumerate() {
-      ret.elements[k] = self / v;
-    }
-    ret
-  }
-}
-
-// Vec3 / Vec3
-impl Div for Vec3 {
-  type Output = Self;
-
-  fn div(self, rhs: Self) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v / rhs.elements[k];
-    }
-    ret
-  }
-}
-
-// Vec3(ref) / Vec3
-impl Div<Vec3> for &Vec3 {
-  type Output = Vec3;
-
-  fn div(self, rhs: Vec3) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v / rhs.elements[k];
-    }
-    ret
-  }
-}
-
-// Vec3 / Vec3(ref)
-impl Div<&Vec3> for Vec3 {
-  type Output = Self;
-
-  fn div(self, rhs: &Vec3) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v / rhs.elements[k];
-    }
-    ret
-  }
-}
-
-// Vec3(ref) / Vec3(ref)
-impl Div for &Vec3 {
-  type Output = Vec3;
-
-  fn div(self, rhs: Self) -> Self::Output {
-    let mut ret = Vec3::new(0.0, 0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v / rhs.elements[k];
-    }
-    ret
-  }
-}
+impl_vec3_scalar_operator!(Div, div, Vec3, /, Real);
+impl_vec3_scalar_operator!(Div, div, &Vec3, /, Real);
+impl_scalar_vec3_operator!(Div, div, Real, /, Vec3);
+impl_scalar_vec3_operator!(Div, div, Real, /, &Vec3);
 
 #[cfg(test)]
 mod tests {
