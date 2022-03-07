@@ -53,6 +53,10 @@ pub fn length2(v: &Vec3) -> Real {
   dot(v, v)
 }
 
+pub fn normalize(v: &Vec3) -> Vec3 {
+  v / length(v)
+}
+
 macro_rules! impl_vec3_operator {
   ($bound:ident, $func:ident, $lhs:ty, $op:tt, $rhs:ty) => {
     impl $bound<$rhs> for $lhs {
@@ -326,6 +330,12 @@ mod tests {
   fn vec3_length2() {
     let v = Vec3::new(1.0, 2.0, 3.0);
     assert_eq!(length2(&v), (14 as Real));
+  }
+
+  #[test]
+  fn vec3_normalize() {
+    let v = Vec3::new(2.0, 0.0, 0.0);
+    assert_eq!(normalize(&v), Vec3::new(1.0, 0.0, 0.0));
   }
 
   #[test]
