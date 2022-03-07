@@ -2,7 +2,7 @@ use std::ops::{Add, Div, Mul, Neg, Sub};
 
 use crate::types::Real;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Vec3 {
   elements: [Real; 3],
 }
@@ -26,7 +26,7 @@ impl Vec3 {
     self.elements[2]
   }
 
-  pub fn dot(&self, v: &Vec3) -> Real {
+  pub fn dot(&self, v: Vec3) -> Real {
     let mut sum: Real = 0.0;
     for (k, _) in self.elements.iter().enumerate() {
       sum += self.elements[k] * v.elements[k];
@@ -34,7 +34,7 @@ impl Vec3 {
     sum
   }
 
-  pub fn cross(&self, v: &Vec3) -> Vec3 {
+  pub fn cross(&self, v: Vec3) -> Vec3 {
     Vec3 {
       elements: [
         self.y() * v.z() - self.z() * v.y(),
@@ -45,11 +45,11 @@ impl Vec3 {
   }
 
   pub fn length(&self) -> Real {
-    self.dot(self).sqrt()
+    (self.x() * self.x() + self.y() * self.y() + self.z() * self.z()).sqrt()
   }
 
   pub fn length2(&self) -> Real {
-    self.dot(self)
+    self.x() * self.x() + self.y() * self.y() + self.z() * self.z()
   }
 
   pub fn normalize(&self) -> Vec3 {
@@ -349,7 +349,7 @@ mod tests {
   fn vec3_dot() {
     let v1 = Vec3::new(1.0, 2.0, 3.0);
     let v2 = Vec3::new(4.0, 5.0, 6.0);
-    assert_eq!(v1.dot(&v2), 32.0);
+    assert_eq!(v1.dot(v2), 32.0);
   }
 
   #[test]
@@ -374,6 +374,6 @@ mod tests {
   fn vec3_cross() {
     let v1 = Vec3::new(1.0, 0.0, 0.0);
     let v2 = Vec3::new(0.0, 1.0, 0.0);
-    assert_eq!(v1.cross(&v2), Vec3::new(0.0, 0.0, 1.0));
+    assert_eq!(v1.cross(v2), Vec3::new(0.0, 0.0, 1.0));
   }
 }

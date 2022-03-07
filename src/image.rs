@@ -34,7 +34,7 @@ impl Image {
     )
   }
 
-  pub fn set_pixel(&mut self, i: usize, j: usize, rgb: &Vec3) {
+  pub fn set_pixel(&mut self, i: usize, j: usize, rgb: Vec3) {
     let base_index = 3 * self.width * i + 3 * j;
     self.pixels[base_index + 0] = rgb.x();
     self.pixels[base_index + 1] = rgb.y();

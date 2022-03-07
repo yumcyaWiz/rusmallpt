@@ -2,7 +2,7 @@ use std::ops::{Add, Div, Mul, Sub};
 
 use crate::types::Real;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Vec2 {
   elements: [Real; 2],
 }
@@ -20,7 +20,7 @@ impl Vec2 {
     self.elements[1]
   }
 
-  pub fn dot(&self, v: &Vec2) -> Real {
+  pub fn dot(&self, v: Vec2) -> Real {
     let mut sum: Real = 0.0;
     for (k, _) in self.elements.iter().enumerate() {
       sum += self.elements[k] * v.elements[k];
@@ -29,11 +29,11 @@ impl Vec2 {
   }
 
   pub fn length(&self) -> Real {
-    self.dot(self).sqrt()
+    (self.x() * self.x() + self.y() * self.y()).sqrt()
   }
 
   pub fn length2(&self) -> Real {
-    self.dot(self)
+    self.x() * self.x() + self.y() * self.y()
   }
 
   pub fn normalize(&self) -> Vec2 {
@@ -298,7 +298,7 @@ mod tests {
   fn vec2_dot() {
     let v1 = Vec2::new(1.0, 2.0);
     let v2 = Vec2::new(3.0, 4.0);
-    assert_eq!(v1.dot(&v2), 11.0);
+    assert_eq!(v1.dot(v2), 11.0);
   }
 
   #[test]
