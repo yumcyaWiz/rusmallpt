@@ -9,10 +9,10 @@ pub struct Ray {
 }
 
 impl Ray {
-  pub fn new(origin: Vec3, direction: Vec3) -> Self {
+  pub fn new(origin: &Vec3, direction: &Vec3) -> Self {
     Ray {
-      origin,
-      direction,
+      origin: origin.clone(),
+      direction: direction.clone(),
       tmin: 1E-3,
       tmax: 1E9,
     }
@@ -35,7 +35,7 @@ mod test {
 
   #[test]
   fn ray_position() {
-    let ray = Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 1.0));
+    let ray = Ray::new(&Vec3::new(0.0, 0.0, 0.0), &Vec3::new(0.0, 0.0, 1.0));
     assert_eq!(ray.position(1.0), Vec3::new(0.0, 0.0, 1.0));
   }
 }
