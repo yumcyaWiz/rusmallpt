@@ -1,3 +1,4 @@
+pub mod camera;
 pub mod core;
 pub mod image;
 pub mod types;
