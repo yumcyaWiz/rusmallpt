@@ -25,36 +25,36 @@ impl Vec3 {
   pub fn z(&self) -> Real {
     self.elements[2]
   }
-}
 
-pub fn dot(v1: &Vec3, v2: &Vec3) -> Real {
-  let mut sum: Real = 0.0;
-  for (k, _) in v1.elements.iter().enumerate() {
-    sum += v1.elements[k] * v2.elements[k];
+  pub fn dot(&self, v: &Vec3) -> Real {
+    let mut sum: Real = 0.0;
+    for (k, _) in self.elements.iter().enumerate() {
+      sum += self.elements[k] * v.elements[k];
+    }
+    sum
   }
-  sum
-}
 
-pub fn cross(v1: &Vec3, v2: &Vec3) -> Vec3 {
-  Vec3 {
-    elements: [
-      v1.y() * v2.z() - v1.z() * v2.y(),
-      v1.z() * v2.x() - v1.x() * v2.z(),
-      v1.x() * v2.y() - v1.y() * v2.x(),
-    ],
+  pub fn cross(&self, v: &Vec3) -> Vec3 {
+    Vec3 {
+      elements: [
+        self.y() * v.z() - self.z() * v.y(),
+        self.z() * v.x() - self.x() * v.z(),
+        self.x() * v.y() - self.y() * v.x(),
+      ],
+    }
   }
-}
 
-pub fn length(v: &Vec3) -> Real {
-  dot(v, v).sqrt()
-}
+  pub fn length(&self) -> Real {
+    self.dot(self).sqrt()
+  }
 
-pub fn length2(v: &Vec3) -> Real {
-  dot(v, v)
-}
+  pub fn length2(&self) -> Real {
+    self.dot(self)
+  }
 
-pub fn normalize(v: &Vec3) -> Vec3 {
-  v / length(v)
+  pub fn normalize(&self) -> Vec3 {
+    self / self.length()
+  }
 }
 
 macro_rules! impl_vec3_operator {
@@ -317,31 +317,31 @@ mod tests {
   fn vec3_dot() {
     let v1 = Vec3::new(1.0, 2.0, 3.0);
     let v2 = Vec3::new(4.0, 5.0, 6.0);
-    assert_eq!(dot(&v1, &v2), 32.0);
+    assert_eq!(v1.dot(&v2), 32.0);
   }
 
   #[test]
   fn vec3_length() {
     let v = Vec3::new(1.0, 2.0, 3.0);
-    assert_eq!(length(&v), (14 as Real).sqrt());
+    assert_eq!(v.length(), (14 as Real).sqrt());
   }
 
   #[test]
   fn vec3_length2() {
     let v = Vec3::new(1.0, 2.0, 3.0);
-    assert_eq!(length2(&v), (14 as Real));
+    assert_eq!(v.length2(), (14 as Real));
   }
 
   #[test]
   fn vec3_normalize() {
     let v = Vec3::new(2.0, 0.0, 0.0);
-    assert_eq!(normalize(&v), Vec3::new(1.0, 0.0, 0.0));
+    assert_eq!(v.normalize(), Vec3::new(1.0, 0.0, 0.0));
   }
 
   #[test]
   fn vec3_cross() {
     let v1 = Vec3::new(1.0, 0.0, 0.0);
     let v2 = Vec3::new(0.0, 1.0, 0.0);
-    assert_eq!(cross(&v1, &v2), Vec3::new(0.0, 0.0, 1.0));
+    assert_eq!(v1.cross(&v2), Vec3::new(0.0, 0.0, 1.0));
   }
 }
