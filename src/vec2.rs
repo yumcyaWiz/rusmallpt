@@ -19,26 +19,26 @@ impl Vec2 {
   pub fn y(&self) -> Real {
     self.elements[1]
   }
-}
 
-pub fn dot(v1: &Vec2, v2: &Vec2) -> Real {
-  let mut sum: Real = 0.0;
-  for (k, _) in v1.elements.iter().enumerate() {
-    sum += v1.elements[k] * v2.elements[k];
+  pub fn dot(&self, v: &Vec2) -> Real {
+    let mut sum: Real = 0.0;
+    for (k, _) in self.elements.iter().enumerate() {
+      sum += self.elements[k] * v.elements[k];
+    }
+    sum
   }
-  sum
-}
 
-pub fn length(v: &Vec2) -> Real {
-  dot(v, v).sqrt()
-}
+  pub fn length(&self) -> Real {
+    self.dot(self).sqrt()
+  }
 
-pub fn length2(v: &Vec2) -> Real {
-  dot(v, v)
-}
+  pub fn length2(&self) -> Real {
+    self.dot(self)
+  }
 
-pub fn normalize(v: &Vec2) -> Vec2 {
-  v / length(v)
+  pub fn normalize(&self) -> Vec2 {
+    self / self.length()
+  }
 }
 
 macro_rules! impl_vec2_operator {
@@ -298,24 +298,24 @@ mod tests {
   fn vec2_dot() {
     let v1 = Vec2::new(1.0, 2.0);
     let v2 = Vec2::new(3.0, 4.0);
-    assert_eq!(dot(&v1, &v2), 11.0);
+    assert_eq!(v1.dot(&v2), 11.0);
   }
 
   #[test]
   fn vec2_length() {
     let v = Vec2::new(1.0, 2.0);
-    assert_eq!(length(&v), (5 as Real).sqrt());
+    assert_eq!(v.length(), (5 as Real).sqrt());
   }
 
   #[test]
   fn vec2_length2() {
     let v = Vec2::new(1.0, 2.0);
-    assert_eq!(length2(&v), (5 as Real));
+    assert_eq!(v.length2(), (5 as Real));
   }
 
   #[test]
   fn vec2_normalize() {
     let v = Vec2::new(2.0, 0.0);
-    assert_eq!(normalize(&v), Vec2::new(1.0, 0.0));
+    assert_eq!(v.normalize(), Vec2::new(1.0, 0.0));
   }
 }
