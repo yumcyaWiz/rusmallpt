@@ -3,25 +3,25 @@ use std::ops::{Add, Div, Mul, Sub};
 use crate::types::Real;
 
 #[derive(Debug, PartialEq)]
-struct Vec2 {
+pub struct Vec2 {
   elements: [Real; 2],
 }
 
 impl Vec2 {
-  fn new(x: Real, y: Real) -> Self {
+  pub fn new(x: Real, y: Real) -> Self {
     Vec2 { elements: [x, y] }
   }
 
-  fn x(&self) -> Real {
+  pub fn x(&self) -> Real {
     self.elements[0]
   }
 
-  fn y(&self) -> Real {
+  pub fn y(&self) -> Real {
     self.elements[1]
   }
 }
 
-fn dot(v1: &Vec2, v2: &Vec2) -> Real {
+pub fn dot(v1: &Vec2, v2: &Vec2) -> Real {
   let mut sum: Real = 0.0;
   for (k, _) in v1.elements.iter().enumerate() {
     sum += v1.elements[k] * v2.elements[k];
@@ -29,175 +29,268 @@ fn dot(v1: &Vec2, v2: &Vec2) -> Real {
   sum
 }
 
-fn length(v: &Vec2) -> Real {
+pub fn length(v: &Vec2) -> Real {
   dot(v, v).sqrt()
 }
 
-fn length2(v: &Vec2) -> Real {
+pub fn length2(v: &Vec2) -> Real {
   dot(v, v)
 }
 
-// Vec2 + Vec2
-impl Add for Vec2 {
-  type Output = Self;
-
-  fn add(self, rhs: Self) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v + rhs.elements[k];
-    }
-    ret
-  }
+pub fn normalize(v: &Vec2) -> Vec2 {
+  v / length(v)
 }
 
-// Vec2 - Vec2
-impl Sub for Vec2 {
-  type Output = Self;
+macro_rules! impl_vec2_operator {
+  ($bound:ident, $func:ident, $lhs:ty, $op:tt, $rhs:ty) => {
+    impl $bound<$rhs> for $lhs {
+      type Output = Vec2;
 
-  fn sub(self, rhs: Self) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v - rhs.elements[k];
+      fn $func(self, rhs: $rhs) -> Self::Output {
+        Vec2{
+          elements: [
+            self.elements[0] $op rhs.elements[0],
+            self.elements[1] $op rhs.elements[1],
+          ]
+        }
+      }
     }
-    ret
-  }
+  };
 }
 
-// Vec2 * Real
-impl Mul<Real> for Vec2 {
-  type Output = Self;
+macro_rules! impl_vec2_scalar_operator {
+  ($bound:ident, $func:ident, $lhs:ty, $op:tt, $rhs:ty) => {
+    impl $bound<$rhs> for $lhs {
+      type Output = Vec2;
 
-  fn mul(self, rhs: Real) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v * rhs;
+      fn $func(self, rhs: $rhs) -> Self::Output {
+        Vec2{
+          elements: [
+            self.elements[0] $op rhs,
+            self.elements[1] $op rhs,
+          ]
+        }
+      }
     }
-    ret
-  }
+  };
 }
 
-// Real * Vec2
-impl Mul<Vec2> for Real {
-  type Output = Vec2;
+macro_rules! impl_scalar_vec2_operator {
+  ($bound:ident, $func:ident, $lhs:ty, $op:tt, $rhs:ty) => {
+    impl $bound<$rhs> for $lhs {
+      type Output = Vec2;
 
-  fn mul(self, rhs: Vec2) -> Self::Output {
-    let mut ret = Vec2::new(0.0, 0.0);
-    for (k, v) in rhs.elements.iter().enumerate() {
-      ret.elements[k] = self * v;
+      fn $func(self, rhs: $rhs) -> Self::Output {
+        Vec2{
+          elements: [
+            self $op rhs.elements[0],
+            self $op rhs.elements[1],
+          ]
+        }
+      }
     }
-    ret
-  }
+  };
 }
 
-// Vec2 * Vec2
-impl Mul for Vec2 {
-  type Output = Self;
+impl_vec2_operator!(Add, add, Vec2, +, Vec2);
+impl_vec2_operator!(Add, add, &Vec2, +, Vec2);
+impl_vec2_operator!(Add, add, Vec2, +, &Vec2);
+impl_vec2_operator!(Add, add, &Vec2, +, &Vec2);
 
-  fn mul(self, rhs: Self) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v * rhs.elements[k];
-    }
-    ret
-  }
-}
+impl_vec2_operator!(Sub, sub, Vec2, -, Vec2);
+impl_vec2_operator!(Sub, sub, &Vec2, -, Vec2);
+impl_vec2_operator!(Sub, sub, Vec2, -, &Vec2);
+impl_vec2_operator!(Sub, sub, &Vec2, -, &Vec2);
 
-// Vec2 / Real
-impl Div<Real> for Vec2 {
-  type Output = Self;
+impl_vec2_operator!(Mul, mul, Vec2, *, Vec2);
+impl_vec2_operator!(Mul, mul, &Vec2, *, Vec2);
+impl_vec2_operator!(Mul, mul, Vec2, *, &Vec2);
+impl_vec2_operator!(Mul, mul, &Vec2, *, &Vec2);
 
-  fn div(self, rhs: Real) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v / rhs;
-    }
-    ret
-  }
-}
+impl_vec2_scalar_operator!(Mul, mul, Vec2, *, Real);
+impl_vec2_scalar_operator!(Mul, mul, &Vec2, *, Real);
+impl_scalar_vec2_operator!(Mul, mul, Real, *, Vec2);
+impl_scalar_vec2_operator!(Mul, mul, Real, *, &Vec2);
 
-// Real / Vec2
-impl Div<Vec2> for Real {
-  type Output = Vec2;
+impl_vec2_operator!(Div, div, Vec2, /, Vec2);
+impl_vec2_operator!(Div, div, &Vec2, /, Vec2);
+impl_vec2_operator!(Div, div, Vec2, /, &Vec2);
+impl_vec2_operator!(Div, div, &Vec2, /, &Vec2);
 
-  fn div(self, rhs: Vec2) -> Self::Output {
-    let mut ret = Vec2::new(0.0, 0.0);
-    for (k, v) in rhs.elements.iter().enumerate() {
-      ret.elements[k] = self / v;
-    }
-    ret
-  }
-}
-
-// Vec2 / Vec2
-impl Div for Vec2 {
-  type Output = Self;
-
-  fn div(self, rhs: Self) -> Self::Output {
-    let mut ret = Self::new(0.0, 0.0);
-    for (k, v) in self.elements.iter().enumerate() {
-      ret.elements[k] = v / rhs.elements[k];
-    }
-    ret
-  }
-}
+impl_vec2_scalar_operator!(Div, div, Vec2, /, Real);
+impl_vec2_scalar_operator!(Div, div, &Vec2, /, Real);
+impl_scalar_vec2_operator!(Div, div, Real, /, Vec2);
+impl_scalar_vec2_operator!(Div, div, Real, /, &Vec2);
 
 #[cfg(test)]
 mod tests {
   use crate::vec2::*;
 
   #[test]
-  fn vec2_add() {
+  fn vec2_val_val_add() {
     let v1 = Vec2::new(1.0, 2.0);
     let v2 = Vec2::new(3.0, 4.0);
     assert_eq!(v1 + v2, Vec2::new(4.0, 6.0));
   }
 
   #[test]
-  fn vec2_sub() {
+  fn vec2_val_ref_add() {
+    let v1 = Vec2::new(1.0, 2.0);
+    let v2 = &Vec2::new(3.0, 4.0);
+    assert_eq!(v1 + v2, Vec2::new(4.0, 6.0));
+  }
+
+  #[test]
+  fn vec2_ref_val_add() {
+    let v1 = &Vec2::new(1.0, 2.0);
+    let v2 = Vec2::new(3.0, 4.0);
+    assert_eq!(v1 + v2, Vec2::new(4.0, 6.0));
+  }
+
+  #[test]
+  fn vec2_ref_ref_add() {
+    let v1 = &Vec2::new(1.0, 2.0);
+    let v2 = &Vec2::new(3.0, 4.0);
+    assert_eq!(v1 + v2, Vec2::new(4.0, 6.0));
+  }
+
+  #[test]
+  fn vec2_val_val_sub() {
     let v1 = Vec2::new(1.0, 2.0);
     let v2 = Vec2::new(3.0, 4.0);
     assert_eq!(v1 - v2, Vec2::new(-2.0, -2.0));
   }
 
   #[test]
-  fn vec2_mul_vec_scalar() {
+  fn vec2_val_ref_sub() {
+    let v1 = Vec2::new(1.0, 2.0);
+    let v2 = &Vec2::new(3.0, 4.0);
+    assert_eq!(v1 - v2, Vec2::new(-2.0, -2.0));
+  }
+
+  #[test]
+  fn vec2_ref_val_sub() {
+    let v1 = &Vec2::new(1.0, 2.0);
+    let v2 = Vec2::new(3.0, 4.0);
+    assert_eq!(v1 - v2, Vec2::new(-2.0, -2.0));
+  }
+
+  #[test]
+  fn vec2_ref_ref_sub() {
+    let v1 = &Vec2::new(1.0, 2.0);
+    let v2 = &Vec2::new(3.0, 4.0);
+    assert_eq!(v1 - v2, Vec2::new(-2.0, -2.0));
+  }
+
+  #[test]
+  fn vec2_valv_vals_mul() {
     let v1 = Vec2::new(1.0, 2.0);
     let v2 = 3.0;
     assert_eq!(v1 * v2, Vec2::new(3.0, 6.0));
   }
 
   #[test]
-  fn vec2_mul_scalar_vec() {
+  fn vec2_refv_vals_mul() {
+    let v1 = &Vec2::new(1.0, 2.0);
+    let v2 = 3.0;
+    assert_eq!(v1 * v2, Vec2::new(3.0, 6.0));
+  }
+
+  #[test]
+  fn vec2_vals_valv_mul() {
     let v1 = 3.0;
     let v2 = Vec2::new(1.0, 2.0);
     assert_eq!(v1 * v2, Vec2::new(3.0, 6.0));
   }
 
   #[test]
-  fn vec2_mul_vec_vec() {
+  fn vec2_vals_refv_mul() {
+    let v1 = 3.0;
+    let v2 = &Vec2::new(1.0, 2.0);
+    assert_eq!(v1 * v2, Vec2::new(3.0, 6.0));
+  }
+
+  #[test]
+  fn vec2_val_val_mul() {
     let v1 = Vec2::new(1.0, 2.0);
     let v2 = Vec2::new(3.0, 4.0);
     assert_eq!(v1 * v2, Vec2::new(3.0, 8.0));
   }
 
   #[test]
-  fn vec2_div_vec_scalar() {
+  fn vec2_ref_val_mul() {
+    let v1 = &Vec2::new(1.0, 2.0);
+    let v2 = Vec2::new(3.0, 4.0);
+    assert_eq!(v1 * v2, Vec2::new(3.0, 8.0));
+  }
+
+  #[test]
+  fn vec2_val_ref_mul() {
+    let v1 = Vec2::new(1.0, 2.0);
+    let v2 = &Vec2::new(3.0, 4.0);
+    assert_eq!(v1 * v2, Vec2::new(3.0, 8.0));
+  }
+
+  #[test]
+  fn vec2_ref_ref_mul() {
+    let v1 = &Vec2::new(1.0, 2.0);
+    let v2 = &Vec2::new(3.0, 4.0);
+    assert_eq!(v1 * v2, Vec2::new(3.0, 8.0));
+  }
+
+  #[test]
+  fn vec2_valv_vals_div() {
     let v1 = Vec2::new(1.0, 2.0);
     let v2 = 2.0;
     assert_eq!(v1 / v2, Vec2::new(0.5, 1.0));
   }
 
   #[test]
-  fn vec2_div_scalar_vec() {
+  fn vec2_refv_vals_div() {
+    let v1 = &Vec2::new(1.0, 2.0);
+    let v2 = 2.0;
+    assert_eq!(v1 / v2, Vec2::new(0.5, 1.0));
+  }
+
+  #[test]
+  fn vec2_vals_valv_div() {
     let v1 = 2.0;
     let v2 = Vec2::new(1.0, 2.0);
     assert_eq!(v1 / v2, Vec2::new(2.0, 1.0));
   }
 
   #[test]
-  fn vec2_div_vec_vec() {
+  fn vec2_vals_refv_div() {
+    let v1 = 2.0;
+    let v2 = &Vec2::new(1.0, 2.0);
+    assert_eq!(v1 / v2, Vec2::new(2.0, 1.0));
+  }
+
+  #[test]
+  fn vec2_val_val_div() {
     let v1 = Vec2::new(1.0, 2.0);
     let v2 = Vec2::new(2.0, 4.0);
+    assert_eq!(v1 / v2, Vec2::new(0.5, 0.5));
+  }
+
+  #[test]
+  fn vec2_ref_val_div() {
+    let v1 = &Vec2::new(1.0, 2.0);
+    let v2 = Vec2::new(2.0, 4.0);
+    assert_eq!(v1 / v2, Vec2::new(0.5, 0.5));
+  }
+
+  #[test]
+  fn vec2_val_ref_div() {
+    let v1 = Vec2::new(1.0, 2.0);
+    let v2 = &Vec2::new(2.0, 4.0);
+    assert_eq!(v1 / v2, Vec2::new(0.5, 0.5));
+  }
+
+  #[test]
+  fn vec2_ref_ref_div() {
+    let v1 = &Vec2::new(1.0, 2.0);
+    let v2 = &Vec2::new(2.0, 4.0);
     assert_eq!(v1 / v2, Vec2::new(0.5, 0.5));
   }
 
@@ -218,5 +311,11 @@ mod tests {
   fn vec2_length2() {
     let v = Vec2::new(1.0, 2.0);
     assert_eq!(length2(&v), (5 as Real));
+  }
+
+  #[test]
+  fn vec2_normalize() {
+    let v = Vec2::new(2.0, 0.0);
+    assert_eq!(normalize(&v), Vec2::new(1.0, 0.0));
   }
 }
