@@ -17,6 +17,14 @@ impl Image {
     }
   }
 
+  pub fn get_width(&self) -> usize {
+    self.width
+  }
+
+  pub fn get_height(&self) -> usize {
+    self.height
+  }
+
   pub fn get_pixel(&self, i: usize, j: usize) -> Vec3 {
     let base_index = 3 * self.width * i + 3 * j;
     Vec3::new(
@@ -47,8 +55,8 @@ impl Image {
   pub fn write_ppm(&self) {
     let mut contents = String::new();
     contents.push_str("P3\n");
-    contents.push_str(format!("{}\n", 255).as_str());
     contents.push_str(format!("{} {}\n", self.width, self.height).as_str());
+    contents.push_str(format!("{}\n", 255).as_str());
 
     for i in 0..self.height {
       for j in 0..self.width {
