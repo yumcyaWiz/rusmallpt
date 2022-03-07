@@ -1,8 +1,8 @@
-use std::ops::{Add, Div, Mul, Sub};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 use crate::types::Real;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Vec3 {
   elements: [Real; 3],
 }
@@ -140,6 +140,26 @@ impl_vec3_scalar_operator!(Div, div, Vec3, /, Real);
 impl_vec3_scalar_operator!(Div, div, &Vec3, /, Real);
 impl_scalar_vec3_operator!(Div, div, Real, /, Vec3);
 impl_scalar_vec3_operator!(Div, div, Real, /, &Vec3);
+
+impl Neg for Vec3 {
+  type Output = Vec3;
+
+  fn neg(self) -> Self::Output {
+    Vec3 {
+      elements: [-self.elements[0], -self.elements[1], -self.elements[2]],
+    }
+  }
+}
+
+impl Neg for &Vec3 {
+  type Output = Vec3;
+
+  fn neg(self) -> Self::Output {
+    Vec3 {
+      elements: [-self.elements[0], -self.elements[1], -self.elements[2]],
+    }
+  }
+}
 
 #[cfg(test)]
 mod tests {
@@ -311,6 +331,18 @@ mod tests {
     let v1 = &Vec3::new(1.0, 2.0, 4.0);
     let v2 = &Vec3::new(2.0, 4.0, 8.0);
     assert_eq!(v1 / v2, Vec3::new(0.5, 0.5, 0.5));
+  }
+
+  #[test]
+  fn vec3_neg() {
+    let v = Vec3::new(1.0, 2.0, 4.0);
+    assert_eq!(-v, Vec3::new(-1.0, -2.0, -4.0));
+  }
+
+  #[test]
+  fn vec3_ref_neg() {
+    let v = &Vec3::new(1.0, 2.0, 4.0);
+    assert_eq!(-v, Vec3::new(-1.0, -2.0, -4.0));
   }
 
   #[test]
