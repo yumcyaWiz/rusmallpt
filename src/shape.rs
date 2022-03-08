@@ -1,14 +1,21 @@
 use crate::core::{IntersectInfo, Ray};
 use crate::types::Real;
 use crate::vec3::Vec3;
+use std::num;
 
-trait Intersectable {
+pub trait Intersectable {
     fn intersect(&self, ray: &Ray) -> Option<IntersectInfo>;
 }
 
-struct Sphere {
+pub struct Sphere {
     center: Vec3,
     radius: Real,
+}
+
+impl Sphere {
+    pub fn new(center: Vec3, radius: Real) -> Self {
+        Sphere { center, radius }
+    }
 }
 
 impl Intersectable for Sphere {
@@ -20,9 +27,9 @@ impl Intersectable for Sphere {
             return None;
         }
 
-        let mut t = -b - b.sqrt();
+        let mut t = -b - d.sqrt();
         if t < ray.tmin || t > ray.tmax {
-            t = -b + b.sqrt();
+            t = -b + d.sqrt();
             if t < ray.tmin || t > ray.tmax {
                 return None;
             }
