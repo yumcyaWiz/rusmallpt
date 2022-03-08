@@ -1,6 +1,7 @@
 use rusmallpt::camera::Camera;
+use rusmallpt::core::Intersectable;
 use rusmallpt::image::Image;
-use rusmallpt::shape::{Intersectable, Sphere};
+use rusmallpt::shape::Sphere;
 use rusmallpt::vec2::Vec2;
 use rusmallpt::vec3::Vec3;
 
