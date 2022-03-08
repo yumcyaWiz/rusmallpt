@@ -1,10 +1,6 @@
-use crate::core::{IntersectInfo, Ray};
+use crate::core::{IntersectInfo, Intersectable, Ray};
 use crate::types::Real;
 use crate::vec3::Vec3;
-
-pub trait Intersectable {
-    fn intersect(&self, ray: &Ray) -> Option<IntersectInfo>;
-}
 
 pub struct Sphere {
     center: Vec3,

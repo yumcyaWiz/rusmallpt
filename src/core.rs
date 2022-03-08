@@ -31,6 +31,10 @@ pub struct IntersectInfo {
     pub hit_normal: Vec3,
 }
 
+pub trait Intersectable {
+    fn intersect(&self, ray: &Ray) -> Option<IntersectInfo>;
+}
+
 #[cfg(test)]
 mod test {
     use crate::core::*;
