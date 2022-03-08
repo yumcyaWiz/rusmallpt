@@ -1,7 +1,6 @@
 use crate::core::{IntersectInfo, Ray};
 use crate::types::Real;
 use crate::vec3::Vec3;
-use std::num;
 
 pub trait Intersectable {
     fn intersect(&self, ray: &Ray) -> Option<IntersectInfo>;
