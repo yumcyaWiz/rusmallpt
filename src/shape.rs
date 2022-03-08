@@ -42,3 +42,22 @@ impl Intersectable for Sphere {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::shape::*;
+
+    #[test]
+    fn sphere_intersect() {
+        let sphere = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0);
+        let ray = Ray::new(Vec3::new(0.0, 0.0, -2.0), Vec3::new(0.0, 0.0, 1.0));
+        assert_eq!(
+            sphere.intersect(&ray),
+            Some(IntersectInfo {
+                t: 1.0,
+                hit_pos: Vec3::new(0.0, 0.0, -1.0),
+                hit_normal: Vec3::new(0.0, 0.0, -1.0)
+            })
+        );
+    }
+}

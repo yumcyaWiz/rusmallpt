@@ -24,6 +24,7 @@ impl Ray {
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub struct IntersectInfo {
     pub t: Real,
     pub hit_pos: Vec3,
