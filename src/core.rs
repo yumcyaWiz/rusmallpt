@@ -12,8 +12,8 @@ pub struct Ray {
 impl Ray {
     pub fn new(origin: Vec3, direction: Vec3) -> Self {
         Ray {
-            origin: origin,
-            direction: direction,
+            origin,
+            direction,
             tmin: 1E-3,
             tmax: 1E9,
         }

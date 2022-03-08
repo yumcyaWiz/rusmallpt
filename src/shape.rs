@@ -30,8 +30,8 @@ impl Intersectable for Sphere {
 
         let hit_pos = ray.position(t);
         Some(IntersectInfo {
-            t: t,
-            hit_pos: hit_pos,
+            t,
+            hit_pos,
             hit_normal: (hit_pos - self.center).normalize(),
         })
     }
