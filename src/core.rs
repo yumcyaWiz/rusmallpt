@@ -56,10 +56,24 @@ pub fn spherical_to_cartesian(theta: Real, phi: Real) -> Vec3 {
 #[cfg(test)]
 mod test {
     use crate::core::*;
+    use std::f32::consts::FRAC_PI_4;
 
     #[test]
     fn ray_position() {
         let ray = Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 1.0));
         assert_eq!(ray.position(1.0), Vec3::new(0.0, 0.0, 1.0));
+    }
+
+    #[test]
+    fn test_spherical_to_cartesian() {
+        assert_eq!(spherical_to_cartesian(0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
+        assert_eq!(
+            spherical_to_cartesian(FRAC_PI_4, FRAC_PI_4),
+            Vec3::new(
+                FRAC_PI_4.cos() * FRAC_PI_4.sin(),
+                FRAC_PI_4.cos(),
+                FRAC_PI_4.sin() * FRAC_PI_4.sin()
+            )
+        );
     }
 }
