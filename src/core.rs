@@ -35,6 +35,24 @@ pub trait Intersectable {
     fn intersect(&self, ray: &Ray) -> Option<IntersectInfo>;
 }
 
+pub struct SampledPosition {
+    pub position: Vec3,
+    pub pdf: Real,
+}
+
+pub struct SampledDirection {
+    pub direction: Vec3,
+    pub pdf: Real,
+}
+
+pub fn spherical_to_cartesian(theta: Real, phi: Real) -> Vec3 {
+    let sin_phi = phi.sin();
+    let cos_phi = phi.cos();
+    let sin_theta = theta.sin();
+    let cos_theta = theta.cos();
+    Vec3::new(cos_phi * sin_theta, cos_theta, sin_phi * sin_theta)
+}
+
 #[cfg(test)]
 mod test {
     use crate::core::*;
