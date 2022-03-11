@@ -23,12 +23,12 @@ impl Sampler {
         self.rng = Pcg32::seed_from_u64(seed);
     }
 
-    pub fn next(&mut self) -> f32 {
+    pub fn next_1d(&mut self) -> f32 {
         self.rng.gen()
     }
 
     pub fn next_2d(&mut self) -> Vec2 {
-        Vec2::new(self.next(), self.next())
+        Vec2::new(self.next_1d(), self.next_1d())
     }
 }
 

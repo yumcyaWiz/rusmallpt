@@ -15,14 +15,11 @@ impl Intersectable for Intersector {
         let mut t = ray.tmax;
         let mut info: Option<IntersectInfo> = None;
         for intersectable in &self.intersectables {
-            match intersectable.intersect(ray) {
-                Some(info_each) => {
-                    if info_each.t < t {
-                        t = info_each.t;
-                        info = Some(info_each);
-                    }
+            if let Some(info_each) = intersectable.intersect(ray) {
+                if info_each.t < t {
+                    t = info_each.t;
+                    info = Some(info_each);
                 }
-                None => {}
             }
         }
         info

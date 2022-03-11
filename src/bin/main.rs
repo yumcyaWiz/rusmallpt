@@ -23,11 +23,8 @@ fn main() {
             );
             let ray = camera.sample_ray(uv);
 
-            match intersector.intersect(&ray) {
-                Some(info) => {
-                    image.set_pixel(i, j, 0.5 * (info.hit_normal + Vec3::new(1.0, 1.0, 1.0)));
-                }
-                None => {}
+            if let Some(info) = intersector.intersect(&ray) {
+                image.set_pixel(i, j, 0.5 * (info.hit_normal + Vec3::new(1.0, 1.0, 1.0)));
             }
         }
     }
