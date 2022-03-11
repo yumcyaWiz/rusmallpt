@@ -2,6 +2,7 @@ pub mod camera;
 pub mod core;
 pub mod image;
 pub mod intersector;
+pub mod material;
 pub mod sampler;
 pub mod shape;
 pub mod types;

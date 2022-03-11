@@ -25,7 +25,7 @@ impl Sampler {
         self.rng.gen()
     }
 
-    pub fn next2D(&mut self) -> Vec2 {
+    pub fn next_2d(&mut self) -> Vec2 {
         Vec2::new(self.next(), self.next())
     }
 }
