@@ -35,16 +35,6 @@ pub trait Intersectable {
     fn intersect(&self, ray: &Ray) -> Option<IntersectInfo>;
 }
 
-pub struct SampledPosition {
-    pub position: Vec3,
-    pub pdf: Real,
-}
-
-pub struct SampledDirection {
-    pub direction: Vec3,
-    pub pdf: Real,
-}
-
 pub fn spherical_to_cartesian(theta: Real, phi: Real) -> Vec3 {
     let sin_phi = phi.sin();
     let cos_phi = phi.cos();

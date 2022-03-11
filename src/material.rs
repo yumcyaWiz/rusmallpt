@@ -21,11 +21,11 @@ pub struct Lambert {
 impl BxDF for Lambert {
     fn sample_bxdf(&self, sampler: &mut Sampler) -> BxDFSample {
         let uv = sampler.next_2d();
-        let dir_sample = cosine_weighted_hemisphere(uv);
+        let (direction, pdf) = cosine_weighted_hemisphere(uv);
         BxDFSample {
             bxdf: FRAC_1_PI * self.rho,
-            direction: dir_sample.direction,
-            pdf: dir_sample.pdf,
+            direction,
+            pdf,
         }
     }
 }
