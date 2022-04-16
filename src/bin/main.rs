@@ -26,7 +26,7 @@ fn main() {
             let ray = camera.sample_ray(uv);
 
             if let Some(info) = scene.intersect(&ray) {
-                image.set_pixel(i, j, 0.5 * (info.hit_normal + Vec3::new(1.0, 1.0, 1.0)));
+                image.set_pixel(i, j, 0.5 * (info.normal + Vec3::new(1.0, 1.0, 1.0)));
             }
         }
     }

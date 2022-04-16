@@ -1,4 +1,4 @@
-use crate::core::{IntersectInfo, Intersectable, Ray};
+use crate::core::{Intersectable, Ray, SurfaceInfo};
 use crate::types::Real;
 use crate::vec3::Vec3;
 
@@ -14,7 +14,7 @@ impl Sphere {
 }
 
 impl Intersectable for Sphere {
-    fn intersect(&self, ray: &Ray) -> Option<IntersectInfo> {
+    fn intersect(&self, ray: &Ray) -> Option<SurfaceInfo> {
         let b = (ray.origin - self.center).dot(ray.direction);
         let c = (ray.origin - self.center).length2() - self.radius * self.radius;
         let d = b * b - c;
@@ -30,11 +30,11 @@ impl Intersectable for Sphere {
             }
         }
 
-        let hit_pos = ray.position(t);
-        Some(IntersectInfo {
+        let pos = ray.position(t);
+        Some(SurfaceInfo {
             t,
-            hit_pos,
-            hit_normal: (hit_pos - self.center).normalize(),
+            pos,
+            normal: (pos - self.center).normalize(),
         })
     }
 }
@@ -49,10 +49,10 @@ mod tests {
         let ray = Ray::new(Vec3::new(0.0, 0.0, -2.0), Vec3::new(0.0, 0.0, 1.0));
         assert_eq!(
             sphere.intersect(&ray),
-            Some(IntersectInfo {
+            Some(SurfaceInfo {
                 t: 1.0,
-                hit_pos: Vec3::new(0.0, 0.0, -1.0),
-                hit_normal: Vec3::new(0.0, 0.0, -1.0)
+                pos: Vec3::new(0.0, 0.0, -1.0),
+                normal: Vec3::new(0.0, 0.0, -1.0)
             })
         );
     }

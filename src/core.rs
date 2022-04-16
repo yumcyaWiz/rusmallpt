@@ -25,14 +25,22 @@ impl Ray {
 }
 
 #[derive(Debug, PartialEq)]
+pub struct SurfaceInfo {
+    pub t: Real,
+    pub pos: Vec3,
+    pub normal: Vec3,
+}
+
+#[derive(Debug, PartialEq)]
 pub struct IntersectInfo {
     pub t: Real,
-    pub hit_pos: Vec3,
-    pub hit_normal: Vec3,
+    pub pos: Vec3,
+    pub normal: Vec3,
+    pub prim_idx: u32,
 }
 
 pub trait Intersectable {
-    fn intersect(&self, ray: &Ray) -> Option<IntersectInfo>;
+    fn intersect(&self, ray: &Ray) -> Option<SurfaceInfo>;
 }
 
 pub fn spherical_to_cartesian(theta: Real, phi: Real) -> Vec3 {

@@ -31,10 +31,8 @@ impl Scene {
         let material = &self.materials[prim_idx as usize];
         Box::new(Lambert::new(material.diffuse))
     }
-}
 
-impl Intersectable for Scene {
-    fn intersect(&self, ray: &Ray) -> Option<IntersectInfo> {
+    pub fn intersect(&self, ray: &Ray) -> Option<IntersectInfo> {
         self.intersector.intersect(ray)
     }
 }
