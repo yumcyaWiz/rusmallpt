@@ -304,13 +304,13 @@ mod tests {
     #[test]
     fn vec2_length() {
         let v = Vec2::new(1.0, 2.0);
-        assert_eq!(v.length(), (5 as Real).sqrt());
+        assert_eq!(v.length(), 5_f32.sqrt());
     }
 
     #[test]
     fn vec2_length2() {
         let v = Vec2::new(1.0, 2.0);
-        assert_eq!(v.length2(), (5 as Real));
+        assert_eq!(v.length2(), 5_f32);
     }
 
     #[test]

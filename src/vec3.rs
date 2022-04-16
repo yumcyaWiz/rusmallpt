@@ -355,13 +355,13 @@ mod tests {
     #[test]
     fn vec3_length() {
         let v = Vec3::new(1.0, 2.0, 3.0);
-        assert_eq!(v.length(), (14 as Real).sqrt());
+        assert_eq!(v.length(), 14_f32.sqrt());
     }
 
     #[test]
     fn vec3_length2() {
         let v = Vec3::new(1.0, 2.0, 3.0);
-        assert_eq!(v.length2(), (14 as Real));
+        assert_eq!(v.length2(), 14_f32);
     }
 
     #[test]
