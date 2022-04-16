@@ -12,18 +12,18 @@ pub struct Material {
 }
 
 pub struct Scene {
-    intersectables: Rc<Vec<Box<dyn IntersectableLocal>>>,
+    primitives: Rc<Vec<Box<dyn IntersectableLocal>>>,
     materials: Vec<Material>,
     intersector: Intersector,
 }
 
 impl Scene {
-    pub fn new(intersectables: Vec<Box<dyn IntersectableLocal>>, materials: Vec<Material>) -> Self {
-        let intersectables = Rc::new(intersectables);
+    pub fn new(primitives: Vec<Box<dyn IntersectableLocal>>, materials: Vec<Material>) -> Self {
+        let primitives = Rc::new(primitives);
         Scene {
-            intersectables: intersectables.clone(),
+            primitives: primitives.clone(),
             materials,
-            intersector: Intersector::new(intersectables),
+            intersector: Intersector::new(primitives),
         }
     }
 
