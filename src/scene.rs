@@ -28,7 +28,8 @@ impl Scene {
     }
 
     fn get_bxdf(&self, prim_idx: u32) -> Box<dyn BxDF> {
-        Box::new(Lambert::new(Vec3::new(1.0, 1.0, 1.0)))
+        let material = &self.materials[prim_idx as usize];
+        Box::new(Lambert::new(material.diffuse))
     }
 }
 
