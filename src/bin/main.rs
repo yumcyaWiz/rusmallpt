@@ -1,7 +1,7 @@
 use rusmallpt::camera::Camera;
 use rusmallpt::core::Intersectable;
 use rusmallpt::image::Image;
-use rusmallpt::scene::Scene;
+use rusmallpt::scene::{Material, Scene};
 use rusmallpt::shape::Sphere;
 use rusmallpt::vec2::Vec2;
 use rusmallpt::vec3::Vec3;
@@ -14,7 +14,8 @@ fn main() {
     let sphere2 = Box::new(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 1.0));
     let sphere3 = Box::new(Sphere::new(Vec3::new(1.0, 0.0, 1.0), 1.0));
     let intersectables: Vec<Box<dyn Intersectable>> = vec![sphere1, sphere2, sphere3];
-    let scene = Scene::new(intersectables);
+    let materials: Vec<Material> = vec![];
+    let scene = Scene::new(intersectables, materials);
 
     for i in 0..image.get_height() {
         for j in 0..image.get_width() {
