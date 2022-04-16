@@ -1,5 +1,5 @@
 use crate::bxdf::{BxDF, Lambert};
-use crate::core::{IntersectInfo, Intersectable, Ray};
+use crate::core::{IntersectInfo, IntersectableGlobal, IntersectableLocal, Ray};
 use crate::intersector::Intersector;
 use crate::vec3::Vec3;
 
@@ -12,13 +12,13 @@ pub struct Material {
 }
 
 pub struct Scene {
-    intersectables: Rc<Vec<Box<dyn Intersectable>>>,
+    intersectables: Rc<Vec<Box<dyn IntersectableLocal>>>,
     materials: Vec<Material>,
     intersector: Intersector,
 }
 
 impl Scene {
-    pub fn new(intersectables: Vec<Box<dyn Intersectable>>, materials: Vec<Material>) -> Self {
+    pub fn new(intersectables: Vec<Box<dyn IntersectableLocal>>, materials: Vec<Material>) -> Self {
         let intersectables = Rc::new(intersectables);
         Scene {
             intersectables: intersectables.clone(),
@@ -31,8 +31,10 @@ impl Scene {
         let material = &self.materials[prim_idx as usize];
         Box::new(Lambert::new(material.diffuse))
     }
+}
 
-    pub fn intersect(&self, ray: &Ray) -> Option<IntersectInfo> {
+impl IntersectableGlobal for Scene {
+    fn intersect(&self, ray: &Ray) -> Option<IntersectInfo> {
         self.intersector.intersect(ray)
     }
 }

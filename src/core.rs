@@ -39,8 +39,14 @@ pub struct IntersectInfo {
     pub prim_idx: u32,
 }
 
-pub trait Intersectable {
+// NOTE: local means it doesn't contain hit primitive index
+pub trait IntersectableLocal {
     fn intersect(&self, ray: &Ray) -> Option<SurfaceInfo>;
+}
+
+// NOTE: global means it contains hit primitive index
+pub trait IntersectableGlobal {
+    fn intersect(&self, ray: &Ray) -> Option<IntersectInfo>;
 }
 
 pub fn spherical_to_cartesian(theta: Real, phi: Real) -> Vec3 {

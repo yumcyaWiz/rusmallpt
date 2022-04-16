@@ -1,17 +1,19 @@
-use crate::core::{IntersectInfo, Intersectable, Ray};
+use crate::core::{IntersectInfo, IntersectableGlobal, IntersectableLocal, Ray};
 
 use std::rc::Rc;
 
 pub struct Intersector {
-    intersectables: Rc<Vec<Box<dyn Intersectable>>>,
+    intersectables: Rc<Vec<Box<dyn IntersectableLocal>>>,
 }
 
 impl Intersector {
-    pub fn new(intersectables: Rc<Vec<Box<dyn Intersectable>>>) -> Self {
+    pub fn new(intersectables: Rc<Vec<Box<dyn IntersectableLocal>>>) -> Self {
         Intersector { intersectables }
     }
+}
 
-    pub fn intersect(&self, ray: &Ray) -> Option<IntersectInfo> {
+impl IntersectableGlobal for Intersector {
+    fn intersect(&self, ray: &Ray) -> Option<IntersectInfo> {
         let mut t = ray.tmax;
         let mut info: Option<IntersectInfo> = None;
         for (idx, intersectable) in self.intersectables.iter().enumerate() {

@@ -1,4 +1,4 @@
-use crate::core::{Intersectable, Ray, SurfaceInfo};
+use crate::core::{IntersectableLocal, Ray, SurfaceInfo};
 use crate::types::Real;
 use crate::vec3::Vec3;
 
@@ -13,7 +13,7 @@ impl Sphere {
     }
 }
 
-impl Intersectable for Sphere {
+impl IntersectableLocal for Sphere {
     fn intersect(&self, ray: &Ray) -> Option<SurfaceInfo> {
         let b = (ray.origin - self.center).dot(ray.direction);
         let c = (ray.origin - self.center).length2() - self.radius * self.radius;
