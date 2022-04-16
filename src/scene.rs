@@ -1,13 +1,25 @@
 use crate::core::{IntersectInfo, Intersectable, Ray};
-use crate::material::BxDF;
+use crate::intersector::Intersector;
+
+use std::rc::Rc;
 
 pub struct Scene {
-    primitives: Vec<Box<dyn Intersectable>>,
-    bxdfs: Vec<Box<dyn BxDF>>,
+    intersectables: Rc<Vec<Box<dyn Intersectable>>>,
+    intersector: Intersector,
 }
 
 impl Scene {
-    fn intersect(ray: &Ray) -> Option<IntersectInfo> {
-        todo!();
+    pub fn new(intersectables: Vec<Box<dyn Intersectable>>) -> Self {
+        let intersectables = Rc::new(intersectables);
+        Scene {
+            intersectables: intersectables.clone(),
+            intersector: Intersector::new(intersectables),
+        }
+    }
+}
+
+impl Intersectable for Scene {
+    fn intersect(&self, ray: &Ray) -> Option<IntersectInfo> {
+        self.intersector.intersect(ray)
     }
 }

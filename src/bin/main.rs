@@ -1,7 +1,7 @@
 use rusmallpt::camera::Camera;
 use rusmallpt::core::Intersectable;
 use rusmallpt::image::Image;
-use rusmallpt::intersector::Intersector;
+use rusmallpt::scene::Scene;
 use rusmallpt::shape::Sphere;
 use rusmallpt::vec2::Vec2;
 use rusmallpt::vec3::Vec3;
@@ -13,7 +13,8 @@ fn main() {
     let sphere1 = Box::new(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0));
     let sphere2 = Box::new(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 1.0));
     let sphere3 = Box::new(Sphere::new(Vec3::new(1.0, 0.0, 1.0), 1.0));
-    let intersector = Intersector::new(vec![sphere1, sphere2, sphere3]);
+    let intersectables: Vec<Box<dyn Intersectable>> = vec![sphere1, sphere2, sphere3];
+    let scene = Scene::new(intersectables);
 
     for i in 0..image.get_height() {
         for j in 0..image.get_width() {
@@ -23,7 +24,7 @@ fn main() {
             );
             let ray = camera.sample_ray(uv);
 
-            if let Some(info) = intersector.intersect(&ray) {
+            if let Some(info) = scene.intersect(&ray) {
                 image.set_pixel(i, j, 0.5 * (info.hit_normal + Vec3::new(1.0, 1.0, 1.0)));
             }
         }
