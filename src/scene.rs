@@ -1,5 +1,6 @@
 use crate::core::{IntersectInfo, Intersectable, Ray};
 use crate::intersector::Intersector;
+use crate::material::{BxDF, Lambert};
 use crate::vec3::Vec3;
 
 use std::rc::Rc;
@@ -24,6 +25,10 @@ impl Scene {
             materials,
             intersector: Intersector::new(intersectables),
         }
+    }
+
+    fn get_bxdf(&self, prim_idx: u32) -> Box<dyn BxDF> {
+        Box::new(Lambert::new(Vec3::new(1.0, 1.0, 1.0)))
     }
 }
 

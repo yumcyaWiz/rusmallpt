@@ -18,6 +18,12 @@ pub struct Lambert {
     rho: Vec3,
 }
 
+impl Lambert {
+    pub fn new(rho: Vec3) -> Self {
+        Lambert { rho }
+    }
+}
+
 impl BxDF for Lambert {
     fn sample_bxdf(&self, sampler: &mut Sampler) -> BxDFSample {
         let uv = sampler.next_2d();
