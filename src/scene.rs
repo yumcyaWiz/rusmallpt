@@ -1,6 +1,6 @@
+use crate::bxdf::{BxDF, Lambert};
 use crate::core::{IntersectInfo, Intersectable, Ray};
 use crate::intersector::Intersector;
-use crate::material::{BxDF, Lambert};
 use crate::vec3::Vec3;
 
 use std::rc::Rc;
