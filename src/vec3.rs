@@ -169,6 +169,21 @@ impl Neg for &Vec3 {
     }
 }
 
+pub fn build_orthonormal_basis(v: Vec3) -> (Vec3, Vec3, Vec3) {
+    let mut lx = Vec3::new(1.0, 0.0, 0.0);
+    let mut ly = v;
+    let mut lz = Vec3::new(0.0, 0.0, 1.0);
+
+    if ly.y().abs() < 0.9 {
+        lx = -ly.cross(Vec3::new(0.0, 1.0, 0.0)).normalize();
+    } else {
+        lx = -ly.cross(Vec3::new(0.0, 0.0, -1.0)).normalize();
+    }
+    lz = lx.cross(ly).normalize();
+
+    (lx, ly, lz)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::vec3::*;
@@ -401,5 +416,14 @@ mod tests {
         let ly = Vec3::new(0.0, 1.0, 0.0);
         let lz = Vec3::new(0.0, 0.0, 1.0);
         assert_eq!(v.local_to_world(lx, ly, lz), Vec3::new(1.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn vec3_orthonormal_basis() {
+        let v = Vec3::new(0.0, 1.0, 0.0);
+        let (lx, ly, lz) = build_orthonormal_basis(v);
+        assert_eq!(lx, Vec3::new(1.0, 0.0, 0.0));
+        assert_eq!(ly, Vec3::new(0.0, 1.0, 0.0));
+        assert_eq!(lz, Vec3::new(0.0, 0.0, 1.0));
     }
 }
