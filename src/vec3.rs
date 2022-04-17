@@ -55,6 +55,14 @@ impl Vec3 {
     pub fn normalize(&self) -> Vec3 {
         self / self.length()
     }
+
+    pub fn world_to_local(&self, lx: Vec3, ly: Vec3, lz: Vec3) -> Vec3 {
+        Vec3::new(self.dot(lx), self.dot(ly), self.dot(lz))
+    }
+
+    pub fn local_to_world(&self, lx: Vec3, ly: Vec3, lz: Vec3) -> Vec3 {
+        self.x() * lx + self.y() * ly + self.z() * lz
+    }
 }
 
 macro_rules! impl_vec3_operator {
@@ -375,5 +383,23 @@ mod tests {
         let v1 = Vec3::new(1.0, 0.0, 0.0);
         let v2 = Vec3::new(0.0, 1.0, 0.0);
         assert_eq!(v1.cross(v2), Vec3::new(0.0, 0.0, 1.0));
+    }
+
+    #[test]
+    fn vec3_world_to_local() {
+        let v = Vec3::new(1.0, 0.0, 0.0);
+        let lx = Vec3::new(1.0, 0.0, 0.0);
+        let ly = Vec3::new(0.0, 1.0, 0.0);
+        let lz = Vec3::new(0.0, 0.0, 1.0);
+        assert_eq!(v.world_to_local(lx, ly, lz), Vec3::new(1.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn vec3_local_to_world() {
+        let v = Vec3::new(1.0, 0.0, 0.0);
+        let lx = Vec3::new(1.0, 0.0, 0.0);
+        let ly = Vec3::new(0.0, 1.0, 0.0);
+        let lz = Vec3::new(0.0, 0.0, 1.0);
+        assert_eq!(v.local_to_world(lx, ly, lz), Vec3::new(1.0, 0.0, 0.0));
     }
 }
