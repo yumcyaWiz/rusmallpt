@@ -2,6 +2,7 @@ pub mod bxdf;
 pub mod camera;
 pub mod core;
 pub mod image;
+pub mod integrator;
 pub mod intersector;
 pub mod sampler;
 pub mod scene;

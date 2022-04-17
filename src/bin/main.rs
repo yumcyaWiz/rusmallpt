@@ -1,6 +1,7 @@
 use rusmallpt::camera::Camera;
-use rusmallpt::core::{IntersectableGlobal, IntersectableLocal};
+use rusmallpt::core::IntersectableLocal;
 use rusmallpt::image::Image;
+use rusmallpt::integrator::{Integrator, NormalIntegrator};
 use rusmallpt::scene::{Material, Scene};
 use rusmallpt::shape::Sphere;
 use rusmallpt::vec2::Vec2;
@@ -17,6 +18,8 @@ fn main() {
     let materials: Vec<Material> = vec![];
     let scene = Scene::new(primitives, materials);
 
+    let integrator = NormalIntegrator::new();
+
     for i in 0..image.get_height() {
         for j in 0..image.get_width() {
             let uv = Vec2::new(
@@ -25,9 +28,9 @@ fn main() {
             );
             let ray = camera.sample_ray(uv);
 
-            if let Some(info) = scene.intersect(&ray) {
-                image.set_pixel(i, j, 0.5 * (info.normal + Vec3::new(1.0, 1.0, 1.0)));
-            }
+            let radiance = integrator.integrate(&scene, &ray);
+
+            image.set_pixel(i, j, radiance);
         }
     }
 
