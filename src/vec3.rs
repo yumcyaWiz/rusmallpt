@@ -75,7 +75,11 @@ impl Vec3 {
     }
 
     pub fn local_to_world(&self, lx: Vec3, ly: Vec3, lz: Vec3) -> Vec3 {
-        self.x() * lx + self.y() * ly + self.z() * lz
+        Vec3::new(
+            self.x() * lx.x() + self.y() * ly.x() + self.z() * lz.x(),
+            self.x() * lx.y() + self.y() * ly.y() + self.z() * lz.y(),
+            self.x() * lx.z() + self.y() * ly.z() + self.z() * lz.z(),
+        )
     }
 }
 
