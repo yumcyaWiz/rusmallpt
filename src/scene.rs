@@ -13,7 +13,7 @@ pub struct Material {
 
 // TODO: make intersector selectable
 pub struct Scene {
-    primitives: Rc<Vec<Box<dyn IntersectableLocal>>>,
+    _primitives: Rc<Vec<Box<dyn IntersectableLocal>>>,
     materials: Vec<Material>,
     intersector: Intersector,
 }
@@ -22,7 +22,7 @@ impl Scene {
     pub fn new(primitives: Vec<Box<dyn IntersectableLocal>>, materials: Vec<Material>) -> Self {
         let primitives = Rc::new(primitives);
         Scene {
-            primitives: primitives.clone(),
+            _primitives: primitives.clone(),
             materials,
             intersector: Intersector::new(primitives),
         }
@@ -42,8 +42,10 @@ impl Scene {
         let (t, n, b) = build_orthonormal_basis(info.normal);
         ShadingInfo {
             x: info.pos,
-            n: info.normal,
+            n,
             wo: wo_global.world_to_local(t, n, b),
+            t,
+            b,
         }
     }
 

@@ -11,7 +11,7 @@ fn reflect(v: Vec3, n: Vec3) -> Vec3 {
     -v + 2.0 * v.dot(n) * n
 }
 
-fn absCosTheta(v: Vec3) -> Real {
+fn abs_cos_theta(v: Vec3) -> Real {
     v.y().abs()
 }
 
@@ -36,7 +36,7 @@ impl Lambert {
 }
 
 impl BxDF for Lambert {
-    fn sample_direction(&self, info: &ShadingInfo, sampler: &mut Sampler) -> BxDFSample {
+    fn sample_direction(&self, _info: &ShadingInfo, sampler: &mut Sampler) -> BxDFSample {
         let uv = sampler.next_2d();
         let (wi, pdf) = cosine_weighted_hemisphere(uv);
         BxDFSample {
@@ -50,10 +50,10 @@ impl BxDF for Lambert {
 pub struct IdealReflection {}
 
 impl BxDF for IdealReflection {
-    fn sample_direction(&self, info: &ShadingInfo, sampler: &mut Sampler) -> BxDFSample {
+    fn sample_direction(&self, info: &ShadingInfo, _sampler: &mut Sampler) -> BxDFSample {
         let wi = reflect(info.wo, info.n);
         BxDFSample {
-            f: Vec3::new(1.0, 1.0, 1.0) / absCosTheta(wi),
+            f: Vec3::new(1.0, 1.0, 1.0) / abs_cos_theta(wi),
             wi,
             pdf: 1.0,
         }

@@ -1,7 +1,8 @@
 use crate::core::{IntersectableGlobal, Ray};
 use crate::sampler::Sampler;
 use crate::scene::Scene;
-use crate::vec3::{build_orthonormal_basis, Vec3};
+use crate::types::Real;
+use crate::vec3::Vec3;
 
 pub trait Integrator {
     // compute radiance coming from given ray
@@ -17,6 +18,7 @@ impl NormalIntegrator {
 }
 
 impl Integrator for NormalIntegrator {
+    #[allow(unused_variables)]
     fn integrate(&self, scene: &Scene, sampler: &mut Sampler, ray: &Ray) -> Vec3 {
         if let Some(info) = scene.intersect(ray) {
             0.5 * (info.normal + Vec3::new(1.0, 1.0, 1.0))
@@ -42,40 +44,52 @@ impl PathTracingIntegrator {
 
 impl Integrator for PathTracingIntegrator {
     fn integrate(&self, scene: &Scene, sampler: &mut Sampler, ray_in: &Ray) -> Vec3 {
-        let mut ray = ray_in.clone();
-        let mut throughput = Vec3::new(1.0, 1.0, 1.0);
         let mut radiance = Vec3::new(0.0, 0.0, 0.0);
 
-        for i in 0..self.max_depth {
-            if let Some(info) = scene.intersect(&ray) {
-                // russian roulette
+        for _k in 0..self.n_samples {
+            let mut ray = ray_in.clone();
+            let mut throughput = Vec3::new(1.0, 1.0, 1.0);
 
-                // terminate if ray hits light
-                if scene.has_emission(info.prim_idx) {
-                    radiance += throughput * scene.get_emission(info.prim_idx);
+            for _depth in 0..self.max_depth {
+                if let Some(info) = scene.intersect(&ray) {
+                    // russian roulette
+                    let russian_roulette_prob = throughput.max().min(1.0);
+                    if sampler.next_1d() >= russian_roulette_prob {
+                        break;
+                    }
+                    throughput /= russian_roulette_prob;
+
+                    // terminate if ray hits light
+                    if scene.has_emission(info.prim_idx) {
+                        radiance += throughput * scene.get_emission(info.prim_idx);
+                        break;
+                    }
+
+                    // sample direction by BxDF
+                    let shading_info = scene.get_shading_info(-ray.direction, &info);
+
+                    // sample direction
+                    let bxdf = scene.get_bxdf(info.prim_idx);
+                    let bxdf_sample = bxdf.sample_direction(&shading_info, sampler);
+
+                    // update throughput
+                    throughput *= bxdf_sample.f * bxdf_sample.wi.y() / bxdf_sample.pdf;
+
+                    // update ray
+                    ray.origin = info.pos;
+                    ray.direction = bxdf_sample.wi.local_to_world(
+                        shading_info.t,
+                        shading_info.n,
+                        shading_info.b,
+                    );
+                } else {
+                    radiance += throughput * Vec3::new(1.0, 1.0, 1.0);
                     break;
                 }
-
-                // sample direction by BxDF
-                // compute local basis
-                let (t, n, b) = build_orthonormal_basis(info.normal);
-
-                // transform from world to local
-                let wo = -ray.direction;
-                let wo_local = wo.world_to_local(t, n, b);
-
-                // sample direction
-                let bxdf = scene.get_bxdf(info.prim_idx);
-                let (f, wi_local, pdf) = bxdf.sample_bxdf(sampler);
-
-                // update throughput
-                // throughput *= 1.0;
-
-                // update ray
-            } else {
-                radiance += throughput * Vec3::new(1.0, 1.0, 1.0);
-                break;
             }
+
+            // take average
+            radiance /= self.n_samples as Real;
         }
 
         radiance

@@ -44,6 +44,8 @@ pub struct ShadingInfo {
     pub x: Vec3,  // position
     pub n: Vec3,  // shading normal
     pub wo: Vec3, // outgoing direction in tangent space
+    pub t: Vec3,  // tangent vector
+    pub b: Vec3,  // bitangent vector
 }
 
 // NOTE: local means it doesn't contain hit primitive index

@@ -29,8 +29,8 @@ fn main() {
             );
             let ray = camera.sample_ray(uv);
 
-            let sampler = Sampler::new(0);
-            let radiance = integrator.integrate(&scene, &sampler, &ray);
+            let mut sampler = Sampler::new(0);
+            let radiance = integrator.integrate(&scene, &mut sampler, &ray);
 
             image.set_pixel(i, j, radiance);
         }

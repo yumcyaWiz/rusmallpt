@@ -222,8 +222,10 @@ impl_vec3_scalar_assign_operator!(MulAssign, mul_assign, Vec3, *, Real);
 impl_vec3_scalar_assign_operator!(DivAssign, div_assign, Vec3, /, Real);
 
 pub fn build_orthonormal_basis(v: Vec3) -> (Vec3, Vec3, Vec3) {
+    #[allow(unused_assignments)]
     let mut lx = Vec3::new(1.0, 0.0, 0.0);
-    let mut ly = v;
+    let ly = v;
+    #[allow(unused_assignments)]
     let mut lz = Vec3::new(0.0, 0.0, 1.0);
 
     if ly.y().abs() < 0.9 {
