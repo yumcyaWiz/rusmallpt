@@ -9,11 +9,11 @@ pub trait Camera {
 }
 
 pub struct PinholeCamera {
-    position: Vec3,
-    forward: Vec3,
-    right: Vec3,
-    up: Vec3,
-    pinhole_position: Vec3,
+    position: Vec3, // camera position
+    forward: Vec3,  // camera forward direction
+    right: Vec3,    // camera right direction
+    up: Vec3,       // camera up direction
+    f: Real,        // focal length
 }
 
 impl PinholeCamera {
@@ -26,7 +26,7 @@ impl PinholeCamera {
             forward,
             right,
             up,
-            pinhole_position: position + f * forward,
+            f,
         }
     }
 }
@@ -34,7 +34,7 @@ impl PinholeCamera {
 impl Camera for PinholeCamera {
     fn sample_ray(&self, uv: Vec2, _sampler: &mut Sampler) -> Ray {
         let sensor_pos = self.position + uv.x() * self.right + uv.y() * self.up;
-        let pinhole_pos = self.position + self.forward;
+        let pinhole_pos = self.position + self.f * self.forward;
         Ray::new(sensor_pos, (pinhole_pos - sensor_pos).normalize())
     }
 }

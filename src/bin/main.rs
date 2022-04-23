@@ -1,3 +1,5 @@
+use std::f32::consts::{FRAC_PI_2, FRAC_PI_4};
+
 use rusmallpt::camera::{Camera, PinholeCamera};
 use rusmallpt::core::IntersectableLocal;
 use rusmallpt::image::Image;
@@ -10,7 +12,11 @@ use rusmallpt::vec2::Vec2;
 use rusmallpt::vec3::Vec3;
 
 fn simple_scene() -> (PinholeCamera, Scene) {
-    let camera = PinholeCamera::new(Vec3::new(0.0, 0.0, 6.0), Vec3::new(0.0, 0.0, -1.0));
+    let camera = PinholeCamera::new(
+        Vec3::new(0.0, 0.0, 6.0),
+        Vec3::new(0.0, 0.0, -1.0),
+        FRAC_PI_2,
+    );
 
     let sphere1 = Box::new(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0));
     let sphere2 = Box::new(Sphere::new(Vec3::new(-1.5, 0.0, -1.5), 1.0));
@@ -49,7 +55,11 @@ fn simple_scene() -> (PinholeCamera, Scene) {
 }
 
 fn cornellbox_scene() -> (PinholeCamera, Scene) {
-    let camera = PinholeCamera::new(Vec3::new(278.0, 273.0, -900.0), Vec3::new(0.0, 0.0, 1.0));
+    let camera = PinholeCamera::new(
+        Vec3::new(278.0, 273.0, -900.0),
+        Vec3::new(0.0, 0.0, 1.0),
+        FRAC_PI_4,
+    );
 
     let floor = Box::new(Plane::new(
         Vec3::new(0.0, 0.0, 0.0),
