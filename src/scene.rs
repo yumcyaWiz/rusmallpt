@@ -5,6 +5,7 @@ use crate::vec3::{build_orthonormal_basis, Vec3};
 
 use std::rc::Rc;
 
+#[derive(Clone)]
 pub struct Material {
     pub diffuse: Vec3,
     pub specular: Vec3,

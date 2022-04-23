@@ -9,11 +9,7 @@ use rusmallpt::types::Real;
 use rusmallpt::vec2::Vec2;
 use rusmallpt::vec3::Vec3;
 
-fn simple_scene() -> (
-    PinholeCamera,
-    Vec<Box<dyn IntersectableLocal>>,
-    Vec<Material>,
-) {
+fn simple_scene() -> (PinholeCamera, Scene) {
     let camera = PinholeCamera::new(Vec3::new(0.0, 0.0, 6.0), Vec3::new(0.0, 0.0, -1.0));
 
     let sphere1 = Box::new(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0));
@@ -49,7 +45,142 @@ fn simple_scene() -> (
         ),
     ];
 
-    (camera, primitives, materials)
+    (camera, Scene::new(primitives, materials))
+}
+
+fn cornellbox_scene() -> (PinholeCamera, Scene) {
+    let camera = PinholeCamera::new(Vec3::new(278.0, 273.0, -900.0), Vec3::new(0.0, 0.0, 1.0));
+
+    let floor = Box::new(Plane::new(
+        Vec3::new(0.0, 0.0, 0.0),
+        Vec3::new(0.0, 0.0, 559.2),
+        Vec3::new(556.0, 0.0, 0.0),
+    ));
+    let right_wall = Box::new(Plane::new(
+        Vec3::new(0.0, 0.0, 0.0),
+        Vec3::new(0.0, 548.8, 0.0),
+        Vec3::new(0.0, 0.0, 559.2),
+    ));
+    let left_wall = Box::new(Plane::new(
+        Vec3::new(556.0, 0.0, 0.0),
+        Vec3::new(0.0, 0.0, 559.2),
+        Vec3::new(0.0, 548.8, 0.0),
+    ));
+    let ceil = Box::new(Plane::new(
+        Vec3::new(0.0, 548.8, 0.0),
+        Vec3::new(556.0, 0.0, 0.0),
+        Vec3::new(0.0, 0.0, 559.2),
+    ));
+    let back_wall = Box::new(Plane::new(
+        Vec3::new(0.0, 0.0, 559.2),
+        Vec3::new(0.0, 548.8, 0.0),
+        Vec3::new(556.0, 0.0, 0.0),
+    ));
+
+    let short_box1 = Box::new(Plane::new(
+        Vec3::new(130.0, 165.0, 65.0),
+        Vec3::new(-48.0, 0.0, 160.0),
+        Vec3::new(160.0, 0.0, 49.0),
+    ));
+    let short_box2 = Box::new(Plane::new(
+        Vec3::new(290.0, 0.0, 114.0),
+        Vec3::new(0.0, 165.0, 0.0),
+        Vec3::new(-50.0, 0.0, 158.0),
+    ));
+    let short_box3 = Box::new(Plane::new(
+        Vec3::new(130.0, 0.0, 65.0),
+        Vec3::new(0.0, 165.0, 0.0),
+        Vec3::new(160.0, 0.0, 49.0),
+    ));
+    let short_box4 = Box::new(Plane::new(
+        Vec3::new(82.0, 0.0, 225.0),
+        Vec3::new(0.0, 165.0, 0.0),
+        Vec3::new(48.0, 0.0, -160.0),
+    ));
+    let short_box5 = Box::new(Plane::new(
+        Vec3::new(240.0, 0.0, 272.0),
+        Vec3::new(0.0, 165.0, 0.0),
+        Vec3::new(-158.0, 0.0, -47.0),
+    ));
+
+    let tall_box1 = Box::new(Plane::new(
+        Vec3::new(423.0, 330.0, 247.0),
+        Vec3::new(-158.0, 0.0, 49.0),
+        Vec3::new(49.0, 0.0, 159.0),
+    ));
+    let tall_box2 = Box::new(Plane::new(
+        Vec3::new(423.0, 0.0, 247.0),
+        Vec3::new(0.0, 330.0, 0.0),
+        Vec3::new(49.0, 0.0, 159.0),
+    ));
+    let tall_box3 = Box::new(Plane::new(
+        Vec3::new(472.0, 0.0, 406.0),
+        Vec3::new(0.0, 330.0, 0.0),
+        Vec3::new(-158.0, 0.0, 50.0),
+    ));
+    let tall_box4 = Box::new(Plane::new(
+        Vec3::new(314.0, 0.0, 456.0),
+        Vec3::new(0.0, 330.0, 0.0),
+        Vec3::new(-49.0, 0.0, -160.0),
+    ));
+    let tall_box5 = Box::new(Plane::new(
+        Vec3::new(265.0, 0.0, 296.0),
+        Vec3::new(0.0, 330.0, 0.0),
+        Vec3::new(158.0, 0.0, -49.0),
+    ));
+
+    let light = Box::new(Plane::new(
+        Vec3::new(343.0, 548.6, 227.0),
+        Vec3::new(-130.0, 0.0, 0.0),
+        Vec3::new(0.0, 0.0, 105.0),
+    ));
+
+    let primitives: Vec<Box<dyn IntersectableLocal>> = vec![
+        floor, right_wall, left_wall, ceil, back_wall, short_box1, short_box2, short_box3,
+        short_box4, short_box5, tall_box1, tall_box2, tall_box3, tall_box4, tall_box5, light,
+    ];
+
+    let white = Material::new(
+        Vec3::new(0.8, 0.8, 0.8),
+        Vec3::new(0.0, 0.0, 0.0),
+        Vec3::new(0.0, 0.0, 0.0),
+    );
+    let red = Material::new(
+        Vec3::new(0.8, 0.05, 0.05),
+        Vec3::new(0.0, 0.0, 0.0),
+        Vec3::new(0.0, 0.0, 0.0),
+    );
+    let green = Material::new(
+        Vec3::new(0.05, 0.8, 0.05),
+        Vec3::new(0.0, 0.0, 0.0),
+        Vec3::new(0.0, 0.0, 0.0),
+    );
+    let light_material = Material::new(
+        Vec3::new(0.8, 0.8, 0.8),
+        Vec3::new(0.0, 0.0, 0.0),
+        Vec3::new(34.0, 19.0, 10.0),
+    );
+
+    let materials = vec![
+        white.clone(),
+        red,
+        green,
+        white.clone(),
+        white.clone(),
+        white.clone(),
+        white.clone(),
+        white.clone(),
+        white.clone(),
+        white.clone(),
+        white.clone(),
+        white.clone(),
+        white.clone(),
+        white.clone(),
+        white,
+        light_material,
+    ];
+
+    (camera, Scene::new(primitives, materials))
 }
 
 fn main() {
@@ -58,8 +189,7 @@ fn main() {
 
     let mut image = Image::new(512, 512);
 
-    let (camera, primitives, materials) = simple_scene();
-    let scene = Scene::new(primitives, materials);
+    let (camera, scene) = cornellbox_scene();
 
     let integrator = PathTracingIntegrator::new(max_depth);
 
