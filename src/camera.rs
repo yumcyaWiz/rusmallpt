@@ -1,5 +1,6 @@
 use crate::core::Ray;
 use crate::sampler::Sampler;
+use crate::types::Real;
 use crate::vec2::*;
 use crate::vec3::*;
 
@@ -12,17 +13,20 @@ pub struct PinholeCamera {
     forward: Vec3,
     right: Vec3,
     up: Vec3,
+    pinhole_position: Vec3,
 }
 
 impl PinholeCamera {
-    pub fn new(position: Vec3, forward: Vec3) -> Self {
+    pub fn new(position: Vec3, forward: Vec3, fov: Real) -> Self {
         let right = forward.cross(Vec3::new(0.0, 1.0, 0.0)).normalize();
         let up = right.cross(forward).normalize();
+        let f = 1.0 / (0.5 * fov).tan();
         PinholeCamera {
             position,
             forward,
             right,
             up,
+            pinhole_position: position + f * forward,
         }
     }
 }
@@ -37,11 +41,17 @@ impl Camera for PinholeCamera {
 
 #[cfg(test)]
 mod tests {
+    use std::f32::consts::FRAC_PI_2;
+
     use crate::camera::*;
 
     #[test]
     fn init_camera() {
-        let camera = PinholeCamera::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, -1.0));
+        let camera = PinholeCamera::new(
+            Vec3::new(0.0, 0.0, 0.0),
+            Vec3::new(0.0, 0.0, -1.0),
+            FRAC_PI_2,
+        );
         assert_eq!(camera.position, Vec3::new(0.0, 0.0, 0.0));
         assert_eq!(camera.forward, Vec3::new(0.0, 0.0, -1.0));
         assert_eq!(camera.right, Vec3::new(1.0, 0.0, 0.0));
@@ -50,7 +60,11 @@ mod tests {
 
     #[test]
     fn sample_ray() {
-        let camera = PinholeCamera::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, -1.0));
+        let camera = PinholeCamera::new(
+            Vec3::new(0.0, 0.0, 0.0),
+            Vec3::new(0.0, 0.0, -1.0),
+            FRAC_PI_2,
+        );
         let mut sampler = Sampler::new(0);
         let sensor_pos = Vec3::new(1.0, 1.0, 0.0);
         let pinhole_pos = Vec3::new(0.0, 0.0, -1.0);
