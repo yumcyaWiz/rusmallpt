@@ -9,9 +9,11 @@ use rusmallpt::types::Real;
 use rusmallpt::vec2::Vec2;
 use rusmallpt::vec3::Vec3;
 
-fn main() {
-    let n_samples = 100;
-    let mut image = Image::new(512, 512);
+fn simple_scene() -> (
+    PinholeCamera,
+    Vec<Box<dyn IntersectableLocal>>,
+    Vec<Material>,
+) {
     let camera = PinholeCamera::new(Vec3::new(0.0, 0.0, 6.0), Vec3::new(0.0, 0.0, -1.0));
 
     let sphere1 = Box::new(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0));
@@ -23,6 +25,7 @@ fn main() {
         Vec3::new(0.0, 0.0, -6.0),
     ));
     let primitives: Vec<Box<dyn IntersectableLocal>> = vec![sphere1, sphere2, sphere3, floor];
+
     let materials: Vec<Material> = vec![
         Material::new(
             Vec3::new(0.8, 0.2, 0.2),
@@ -45,15 +48,27 @@ fn main() {
             Vec3::new(0.0, 0.0, 0.0),
         ),
     ];
+
+    (camera, primitives, materials)
+}
+
+fn main() {
+    let n_samples = 1;
+    let max_depth = 100;
+
+    let mut image = Image::new(512, 512);
+
+    let (camera, primitives, materials) = simple_scene();
     let scene = Scene::new(primitives, materials);
 
-    let integrator = PathTracingIntegrator::new(100);
+    let integrator = PathTracingIntegrator::new(max_depth);
 
     for i in 0..image.get_height() {
         for j in 0..image.get_width() {
             // init sampler
             let seed = j + image.get_width() * i;
             let mut sampler = Sampler::new(seed as u64);
+            // warmup
             for _k in 0..n_samples {
                 sampler.next_1d();
             }

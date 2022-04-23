@@ -41,14 +41,10 @@ impl IntersectableLocal for Sphere {
 
 pub struct Plane {
     left_corner_point: Vec3,
-    right: Vec3,
-    up: Vec3,
-
     center: Vec3,
     normal: Vec3,
     right_dir: Vec3,
     up_dir: Vec3,
-
     right_dir_length: Real,
     up_dir_length: Real,
 }
@@ -57,8 +53,6 @@ impl Plane {
     pub fn new(left_corner_point: Vec3, right: Vec3, up: Vec3) -> Self {
         Plane {
             left_corner_point,
-            right,
-            up,
             center: left_corner_point + 0.5 * right + 0.5 * up,
             normal: right.cross(up).normalize(),
             right_dir: right.normalize(),
