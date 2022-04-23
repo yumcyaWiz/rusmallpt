@@ -1,5 +1,5 @@
 use crate::bxdf::{BxDF, Lambert};
-use crate::core::{IntersectInfo, IntersectableGlobal, IntersectableLocal, Ray};
+use crate::core::{IntersectInfoGlobal, IntersectableGlobal, IntersectableLocal, Ray};
 use crate::intersector::Intersector;
 use crate::vec3::Vec3;
 
@@ -27,14 +27,24 @@ impl Scene {
         }
     }
 
-    fn get_bxdf(&self, prim_idx: u32) -> Box<dyn BxDF> {
+    pub fn has_emission(&self, prim_idx: u32) -> bool {
+        let emission = self.materials[prim_idx as usize].emission;
+        emission.x() > 0.0 && emission.y() > 0.0 && emission.z() > 0.0
+    }
+
+    pub fn get_emission(&self, prim_idx: u32) -> Vec3 {
+        let material = &self.materials[prim_idx as usize];
+        material.emission
+    }
+
+    pub fn get_bxdf(&self, prim_idx: u32) -> Box<dyn BxDF> {
         let material = &self.materials[prim_idx as usize];
         Box::new(Lambert::new(material.diffuse))
     }
 }
 
 impl IntersectableGlobal for Scene {
-    fn intersect(&self, ray: &Ray) -> Option<IntersectInfo> {
+    fn intersect(&self, ray: &Ray) -> Option<IntersectInfoGlobal> {
         self.intersector.intersect(ray)
     }
 }

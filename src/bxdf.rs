@@ -4,14 +4,8 @@ use crate::sampler::{cosine_weighted_hemisphere, Sampler};
 use crate::types::Real;
 use crate::vec3::Vec3;
 
-pub struct BxDFSample {
-    pub bxdf: Vec3,
-    pub direction: Vec3,
-    pub pdf: Real,
-}
-
 pub trait BxDF {
-    fn sample_bxdf(&self, sampler: &mut Sampler) -> BxDFSample;
+    fn sample_bxdf(&self, sampler: &mut Sampler) -> (Vec3, Vec3, Real);
 }
 
 pub struct Lambert {
@@ -25,13 +19,9 @@ impl Lambert {
 }
 
 impl BxDF for Lambert {
-    fn sample_bxdf(&self, sampler: &mut Sampler) -> BxDFSample {
+    fn sample_bxdf(&self, sampler: &mut Sampler) -> (Vec3, Vec3, Real) {
         let uv = sampler.next_2d();
         let (direction, pdf) = cosine_weighted_hemisphere(uv);
-        BxDFSample {
-            bxdf: FRAC_1_PI * self.rho,
-            direction,
-            pdf,
-        }
+        (FRAC_1_PI * self.rho, direction, pdf)
     }
 }

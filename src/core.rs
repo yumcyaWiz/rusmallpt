@@ -1,7 +1,7 @@
 use crate::types::Real;
 use crate::vec3::Vec3;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Ray {
     pub origin: Vec3,
     pub direction: Vec3,
@@ -25,28 +25,35 @@ impl Ray {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct SurfaceInfo {
+pub struct IntersectInfoLocal {
     pub t: Real,
     pub pos: Vec3,
     pub normal: Vec3,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct IntersectInfo {
+pub struct IntersectInfoGlobal {
     pub t: Real,
     pub pos: Vec3,
     pub normal: Vec3,
     pub prim_idx: u32,
 }
 
+#[derive(Debug, PartialEq)]
+pub struct ShadingInfo {
+    pub x: Vec3,  // position
+    pub n: Vec3,  // shading normal
+    pub wo: Vec3, // outgoing direction in tangent space
+}
+
 // NOTE: local means it doesn't contain hit primitive index
 pub trait IntersectableLocal {
-    fn intersect(&self, ray: &Ray) -> Option<SurfaceInfo>;
+    fn intersect(&self, ray: &Ray) -> Option<IntersectInfoLocal>;
 }
 
 // NOTE: global means it contains hit primitive index
 pub trait IntersectableGlobal {
-    fn intersect(&self, ray: &Ray) -> Option<IntersectInfo>;
+    fn intersect(&self, ray: &Ray) -> Option<IntersectInfoGlobal>;
 }
 
 pub fn spherical_to_cartesian(theta: Real, phi: Real) -> Vec3 {

@@ -2,6 +2,7 @@ use rusmallpt::camera::Camera;
 use rusmallpt::core::IntersectableLocal;
 use rusmallpt::image::Image;
 use rusmallpt::integrator::{Integrator, NormalIntegrator};
+use rusmallpt::sampler::Sampler;
 use rusmallpt::scene::{Material, Scene};
 use rusmallpt::shape::Sphere;
 use rusmallpt::vec2::Vec2;
@@ -28,7 +29,8 @@ fn main() {
             );
             let ray = camera.sample_ray(uv);
 
-            let radiance = integrator.integrate(&scene, &ray);
+            let sampler = Sampler::new(0);
+            let radiance = integrator.integrate(&scene, &sampler, &ray);
 
             image.set_pixel(i, j, radiance);
         }
