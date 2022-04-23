@@ -4,20 +4,24 @@ use rusmallpt::image::Image;
 use rusmallpt::integrator::{Integrator, NormalIntegrator, PathTracingIntegrator};
 use rusmallpt::sampler::Sampler;
 use rusmallpt::scene::{Material, Scene};
-use rusmallpt::shape::Sphere;
+use rusmallpt::shape::{Plane, Sphere};
 use rusmallpt::types::Real;
 use rusmallpt::vec2::Vec2;
 use rusmallpt::vec3::Vec3;
 
 fn main() {
-    let n_samples = 1;
+    let n_samples = 100;
     let mut image = Image::new(512, 512);
     let camera = PinholeCamera::new(Vec3::new(0.0, 0.0, 6.0), Vec3::new(0.0, 0.0, -1.0));
 
     let sphere1 = Box::new(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0));
     let sphere2 = Box::new(Sphere::new(Vec3::new(-1.5, 0.0, -1.5), 1.0));
     let sphere3 = Box::new(Sphere::new(Vec3::new(1.5, 0.0, 1.5), 1.0));
-    let floor = Box::new(Sphere::new(Vec3::new(0.0, -1001.0, 0.0), 1000.0));
+    let floor = Box::new(Plane::new(
+        Vec3::new(-3.0, -1.0, 3.0),
+        Vec3::new(6.0, 0.0, 0.0),
+        Vec3::new(0.0, 0.0, -6.0),
+    ));
     let primitives: Vec<Box<dyn IntersectableLocal>> = vec![sphere1, sphere2, sphere3, floor];
     let materials: Vec<Material> = vec![
         Material::new(
