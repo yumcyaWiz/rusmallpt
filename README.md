@@ -2,6 +2,8 @@
 
 Minimal but extensible implementation of path tracing in Rust.
 
+![](img/test2_100spp.png)
+
 ## Build
 
 ```
