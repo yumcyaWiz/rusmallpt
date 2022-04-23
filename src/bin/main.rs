@@ -5,52 +5,70 @@ use rusmallpt::integrator::{Integrator, NormalIntegrator, PathTracingIntegrator}
 use rusmallpt::sampler::Sampler;
 use rusmallpt::scene::{Material, Scene};
 use rusmallpt::shape::Sphere;
+use rusmallpt::types::Real;
 use rusmallpt::vec2::Vec2;
 use rusmallpt::vec3::Vec3;
 
 fn main() {
     let mut image = Image::new(512, 512);
-    let camera = Camera::new(Vec3::new(0.0, 0.0, 5.0), Vec3::new(0.0, 0.0, -1.0));
+    let camera = Camera::new(Vec3::new(0.0, 0.0, 6.0), Vec3::new(0.0, 0.0, -1.0));
 
     let sphere1 = Box::new(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0));
-    let sphere2 = Box::new(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 1.0));
-    let sphere3 = Box::new(Sphere::new(Vec3::new(1.0, 0.0, 1.0), 1.0));
-    let primitives: Vec<Box<dyn IntersectableLocal>> = vec![sphere1, sphere2, sphere3];
+    let sphere2 = Box::new(Sphere::new(Vec3::new(-1.5, 0.0, -1.5), 1.0));
+    let sphere3 = Box::new(Sphere::new(Vec3::new(1.5, 0.0, 1.5), 1.0));
+    let floor = Box::new(Sphere::new(Vec3::new(0.0, -1001.0, 0.0), 1000.0));
+    let primitives: Vec<Box<dyn IntersectableLocal>> = vec![sphere1, sphere2, sphere3, floor];
     let materials: Vec<Material> = vec![
         Material::new(
-            Vec3::new(1.0, 0.8, 0.8),
+            Vec3::new(0.8, 0.2, 0.2),
             Vec3::new(0.0, 0.0, 0.0),
             Vec3::new(0.0, 0.0, 0.0),
         ),
         Material::new(
-            Vec3::new(0.8, 1.0, 0.8),
+            Vec3::new(0.2, 0.8, 0.2),
             Vec3::new(0.0, 0.0, 0.0),
             Vec3::new(0.0, 0.0, 0.0),
         ),
         Material::new(
-            Vec3::new(0.8, 0.8, 1.0),
+            Vec3::new(0.2, 0.2, 0.8),
+            Vec3::new(0.0, 0.0, 0.0),
+            Vec3::new(0.0, 0.0, 0.0),
+        ),
+        Material::new(
+            Vec3::new(0.8, 0.8, 0.8),
             Vec3::new(0.0, 0.0, 0.0),
             Vec3::new(0.0, 0.0, 0.0),
         ),
     ];
     let scene = Scene::new(primitives, materials);
 
-    let integrator = PathTracingIntegrator::new(1, 100);
+    let integrator = PathTracingIntegrator::new(10, 100);
 
     for i in 0..image.get_height() {
         for j in 0..image.get_width() {
+            // init sampler
+            let seed = j + image.get_width() * i;
+            let mut sampler = Sampler::new(seed as u64);
+            for _k in 0..10 {
+                sampler.next_1d();
+            }
+
+            // generate initial ray from camera
+            let width = image.get_width() as Real;
+            let height = image.get_height() as Real;
             let uv = Vec2::new(
-                (2.0 * (j as f32) - 512.0) / 512.0,
-                (2.0 * (i as f32) - 512.0) / 512.0,
+                (2.0 * (j as Real + sampler.next_1d()) - width) / height,
+                (2.0 * (i as Real + sampler.next_1d()) - height) / height,
             );
             let ray = camera.sample_ray(uv);
 
-            let mut sampler = Sampler::new(0);
+            // compute radiance by integrator
             let radiance = integrator.integrate(&scene, &mut sampler, &ray);
 
             image.set_pixel(i, j, radiance);
         }
     }
 
+    image.gamma_correction();
     image.write_ppm();
 }

@@ -73,7 +73,7 @@ impl Integrator for PathTracingIntegrator {
                     let bxdf_sample = bxdf.sample_direction(&shading_info, sampler);
 
                     // update throughput
-                    throughput *= bxdf_sample.f * bxdf_sample.wi.y() / bxdf_sample.pdf;
+                    throughput *= bxdf_sample.f * bxdf_sample.wi.y().abs() / bxdf_sample.pdf;
 
                     // update ray
                     ray.origin = info.pos;
@@ -87,11 +87,7 @@ impl Integrator for PathTracingIntegrator {
                     break;
                 }
             }
-
-            // take average
-            radiance /= self.n_samples as Real;
         }
-
         radiance
     }
 }
