@@ -56,6 +56,18 @@ impl Vec3 {
         self / self.length()
     }
 
+    pub fn max(&self) -> Real {
+        self.x().max(self.y()).max(self.z())
+    }
+
+    pub fn max3(&self, v: Vec3) -> Vec3 {
+        Vec3::new(
+            self.x().max(v.x()),
+            self.y().max(v.y()),
+            self.z().max(v.z()),
+        )
+    }
+
     pub fn world_to_local(&self, lx: Vec3, ly: Vec3, lz: Vec3) -> Vec3 {
         Vec3::new(self.dot(lx), self.dot(ly), self.dot(lz))
     }
@@ -202,10 +214,10 @@ impl_vec3_assign_operator!(SubAssign, sub_assign, Vec3, -, Vec3);
 impl_vec3_assign_operator!(MulAssign, mul_assign, Vec3, *, Vec3);
 impl_vec3_assign_operator!(DivAssign, div_assign, Vec3, /, Vec3);
 
-impl_vec3_scalar_assign_operator!(AddAssign, add_assign, Vec3, +, f32);
-impl_vec3_scalar_assign_operator!(SubAssign, sub_assign, Vec3, -, f32);
-impl_vec3_scalar_assign_operator!(MulAssign, mul_assign, Vec3, *, f32);
-impl_vec3_scalar_assign_operator!(DivAssign, div_assign, Vec3, /, f32);
+impl_vec3_scalar_assign_operator!(AddAssign, add_assign, Vec3, +, Real);
+impl_vec3_scalar_assign_operator!(SubAssign, sub_assign, Vec3, -, Real);
+impl_vec3_scalar_assign_operator!(MulAssign, mul_assign, Vec3, *, Real);
+impl_vec3_scalar_assign_operator!(DivAssign, div_assign, Vec3, /, Real);
 
 pub fn build_orthonormal_basis(v: Vec3) -> (Vec3, Vec3, Vec3) {
     let mut lx = Vec3::new(1.0, 0.0, 0.0);
