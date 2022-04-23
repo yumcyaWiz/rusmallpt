@@ -119,6 +119,34 @@ macro_rules! impl_scalar_vec3_operator {
   };
 }
 
+macro_rules! impl_vec3_assign_operator  {
+    ($bound:ident, $func:ident, $lhs:ty, $op:tt, $rhs:ty) => {
+        impl $bound<$rhs> for $lhs {
+            fn $func(&mut self, rhs: $rhs) {
+                *self = Vec3::new(
+                    self.x() $op rhs.x(),
+                    self.y() $op rhs.y(),
+                    self.z() $op rhs.z(),
+                )
+            }
+        }
+    };
+}
+
+macro_rules! impl_vec3_scalar_assign_operator  {
+    ($bound:ident, $func:ident, $lhs:ty, $op:tt, $rhs:ty) => {
+        impl $bound<$rhs> for $lhs {
+            fn $func(&mut self, rhs: $rhs) {
+                *self = Vec3::new(
+                    self.x() $op rhs,
+                    self.y() $op rhs,
+                    self.z() $op rhs,
+                )
+            }
+        }
+    };
+}
+
 impl_vec3_operator!(Add, add, Vec3, +, Vec3);
 impl_vec3_operator!(Add, add, &Vec3, +, Vec3);
 impl_vec3_operator!(Add, add, Vec3, +, &Vec3);
@@ -169,29 +197,15 @@ impl Neg for &Vec3 {
     }
 }
 
-impl AddAssign for Vec3 {
-    fn add_assign(&mut self, rhs: Self) {
-        *self = Self::new(self.x() + rhs.x(), self.y() + rhs.y(), self.z() + rhs.z());
-    }
-}
+impl_vec3_assign_operator!(AddAssign, add_assign, Vec3, +, Vec3);
+impl_vec3_assign_operator!(SubAssign, sub_assign, Vec3, -, Vec3);
+impl_vec3_assign_operator!(MulAssign, mul_assign, Vec3, *, Vec3);
+impl_vec3_assign_operator!(DivAssign, div_assign, Vec3, /, Vec3);
 
-impl SubAssign for Vec3 {
-    fn sub_assign(&mut self, rhs: Self) {
-        *self = Self::new(self.x() - rhs.x(), self.y() - rhs.y(), self.z() - rhs.z());
-    }
-}
-
-impl MulAssign for Vec3 {
-    fn mul_assign(&mut self, rhs: Self) {
-        *self = Self::new(self.x() * rhs.x(), self.y() * rhs.y(), self.z() * rhs.z());
-    }
-}
-
-impl DivAssign for Vec3 {
-    fn div_assign(&mut self, rhs: Self) {
-        *self = Self::new(self.x() / rhs.x(), self.y() / rhs.y(), self.z() / rhs.z());
-    }
-}
+impl_vec3_scalar_assign_operator!(AddAssign, add_assign, Vec3, +, f32);
+impl_vec3_scalar_assign_operator!(SubAssign, sub_assign, Vec3, -, f32);
+impl_vec3_scalar_assign_operator!(MulAssign, mul_assign, Vec3, *, f32);
+impl_vec3_scalar_assign_operator!(DivAssign, div_assign, Vec3, /, f32);
 
 pub fn build_orthonormal_basis(v: Vec3) -> (Vec3, Vec3, Vec3) {
     let mut lx = Vec3::new(1.0, 0.0, 0.0);
