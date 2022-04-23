@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 use crate::types::Real;
 
@@ -166,6 +166,30 @@ impl Neg for &Vec3 {
         Vec3 {
             elements: [-self.elements[0], -self.elements[1], -self.elements[2]],
         }
+    }
+}
+
+impl AddAssign for Vec3 {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = Self::new(self.x() + rhs.x(), self.y() + rhs.y(), self.z() + rhs.z());
+    }
+}
+
+impl SubAssign for Vec3 {
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = Self::new(self.x() - rhs.x(), self.y() - rhs.y(), self.z() - rhs.z());
+    }
+}
+
+impl MulAssign for Vec3 {
+    fn mul_assign(&mut self, rhs: Self) {
+        *self = Self::new(self.x() * rhs.x(), self.y() * rhs.y(), self.z() * rhs.z());
+    }
+}
+
+impl DivAssign for Vec3 {
+    fn div_assign(&mut self, rhs: Self) {
+        *self = Self::new(self.x() / rhs.x(), self.y() / rhs.y(), self.z() / rhs.z());
     }
 }
 
