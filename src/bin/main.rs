@@ -1,4 +1,4 @@
-use rusmallpt::camera::Camera;
+use rusmallpt::camera::{Camera, PinholeCamera};
 use rusmallpt::core::IntersectableLocal;
 use rusmallpt::image::Image;
 use rusmallpt::integrator::{Integrator, NormalIntegrator, PathTracingIntegrator};
@@ -10,9 +10,9 @@ use rusmallpt::vec2::Vec2;
 use rusmallpt::vec3::Vec3;
 
 fn main() {
-    let n_samples = 10;
+    let n_samples = 1;
     let mut image = Image::new(512, 512);
-    let camera = Camera::new(Vec3::new(0.0, 0.0, 6.0), Vec3::new(0.0, 0.0, -1.0));
+    let camera = PinholeCamera::new(Vec3::new(0.0, 0.0, 6.0), Vec3::new(0.0, 0.0, -1.0));
 
     let sphere1 = Box::new(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0));
     let sphere2 = Box::new(Sphere::new(Vec3::new(-1.5, 0.0, -1.5), 1.0));
@@ -63,7 +63,7 @@ fn main() {
                     (2.0 * (j as Real + sampler.next_1d()) - width) / height,
                     (2.0 * (i as Real + sampler.next_1d()) - height) / height,
                 );
-                let ray = camera.sample_ray(uv);
+                let ray = camera.sample_ray(uv, &mut sampler);
 
                 // compute radiance by integrator
                 radiance += integrator.integrate(&scene, &mut sampler, &ray);
