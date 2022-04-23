@@ -75,7 +75,7 @@ impl Integrator for PathTracingIntegrator {
                         .wi
                         .local_to_world(shading_info.t, shading_info.n, shading_info.b);
             } else {
-                radiance += throughput * Vec3::new(1.0, 1.0, 1.0);
+                radiance += throughput * Vec3::new(0.0, 0.0, 0.0);
                 break;
             }
         }

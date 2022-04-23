@@ -194,7 +194,7 @@ fn cornellbox_scene() -> (PinholeCamera, Scene) {
 }
 
 fn main() {
-    let n_samples = 1;
+    let n_samples = 10;
     let max_depth = 100;
 
     let mut image = Image::new(512, 512);

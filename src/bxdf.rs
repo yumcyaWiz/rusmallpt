@@ -26,7 +26,7 @@ pub trait BxDF {
 }
 
 pub struct Lambert {
-    rho: Vec3,
+    rho: Vec3, // albedo
 }
 
 impl Lambert {
