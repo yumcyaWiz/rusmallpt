@@ -10,6 +10,7 @@ use rusmallpt::vec2::Vec2;
 use rusmallpt::vec3::Vec3;
 
 fn main() {
+    let n_samples = 10;
     let mut image = Image::new(512, 512);
     let camera = Camera::new(Vec3::new(0.0, 0.0, 6.0), Vec3::new(0.0, 0.0, -1.0));
 
@@ -42,28 +43,32 @@ fn main() {
     ];
     let scene = Scene::new(primitives, materials);
 
-    let integrator = PathTracingIntegrator::new(10, 100);
+    let integrator = PathTracingIntegrator::new(100);
 
     for i in 0..image.get_height() {
         for j in 0..image.get_width() {
             // init sampler
             let seed = j + image.get_width() * i;
             let mut sampler = Sampler::new(seed as u64);
-            for _k in 0..10 {
+            for _k in 0..n_samples {
                 sampler.next_1d();
             }
 
-            // generate initial ray from camera
             let width = image.get_width() as Real;
             let height = image.get_height() as Real;
-            let uv = Vec2::new(
-                (2.0 * (j as Real + sampler.next_1d()) - width) / height,
-                (2.0 * (i as Real + sampler.next_1d()) - height) / height,
-            );
-            let ray = camera.sample_ray(uv);
+            let mut radiance = Vec3::new(0.0, 0.0, 0.0);
+            for _k in 0..n_samples {
+                // generate initial ray from camera
+                let uv = Vec2::new(
+                    (2.0 * (j as Real + sampler.next_1d()) - width) / height,
+                    (2.0 * (i as Real + sampler.next_1d()) - height) / height,
+                );
+                let ray = camera.sample_ray(uv);
 
-            // compute radiance by integrator
-            let radiance = integrator.integrate(&scene, &mut sampler, &ray);
+                // compute radiance by integrator
+                radiance += integrator.integrate(&scene, &mut sampler, &ray);
+            }
+            radiance /= n_samples as Real;
 
             image.set_pixel(i, j, radiance);
         }
