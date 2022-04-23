@@ -11,6 +11,16 @@ pub struct Material {
     pub emission: Vec3,
 }
 
+impl Material {
+    pub fn new(diffuse: Vec3, specular: Vec3, emission: Vec3) -> Self {
+        Material {
+            diffuse,
+            specular,
+            emission,
+        }
+    }
+}
+
 // TODO: make intersector selectable
 pub struct Scene {
     _primitives: Rc<Vec<Box<dyn IntersectableLocal>>>,
@@ -20,6 +30,10 @@ pub struct Scene {
 
 impl Scene {
     pub fn new(primitives: Vec<Box<dyn IntersectableLocal>>, materials: Vec<Material>) -> Self {
+        if primitives.len() != materials.len() {
+            panic!("number of primitives does not equal to the number of materials.");
+        }
+
         let primitives = Rc::new(primitives);
         Scene {
             _primitives: primitives.clone(),

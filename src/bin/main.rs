@@ -1,7 +1,7 @@
 use rusmallpt::camera::Camera;
 use rusmallpt::core::IntersectableLocal;
 use rusmallpt::image::Image;
-use rusmallpt::integrator::{Integrator, NormalIntegrator};
+use rusmallpt::integrator::{Integrator, NormalIntegrator, PathTracingIntegrator};
 use rusmallpt::sampler::Sampler;
 use rusmallpt::scene::{Material, Scene};
 use rusmallpt::shape::Sphere;
@@ -16,10 +16,26 @@ fn main() {
     let sphere2 = Box::new(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 1.0));
     let sphere3 = Box::new(Sphere::new(Vec3::new(1.0, 0.0, 1.0), 1.0));
     let primitives: Vec<Box<dyn IntersectableLocal>> = vec![sphere1, sphere2, sphere3];
-    let materials: Vec<Material> = vec![];
+    let materials: Vec<Material> = vec![
+        Material::new(
+            Vec3::new(1.0, 0.8, 0.8),
+            Vec3::new(0.0, 0.0, 0.0),
+            Vec3::new(0.0, 0.0, 0.0),
+        ),
+        Material::new(
+            Vec3::new(0.8, 1.0, 0.8),
+            Vec3::new(0.0, 0.0, 0.0),
+            Vec3::new(0.0, 0.0, 0.0),
+        ),
+        Material::new(
+            Vec3::new(0.8, 0.8, 1.0),
+            Vec3::new(0.0, 0.0, 0.0),
+            Vec3::new(0.0, 0.0, 0.0),
+        ),
+    ];
     let scene = Scene::new(primitives, materials);
 
-    let integrator = NormalIntegrator::new();
+    let integrator = PathTracingIntegrator::new(1, 100);
 
     for i in 0..image.get_height() {
         for j in 0..image.get_width() {
