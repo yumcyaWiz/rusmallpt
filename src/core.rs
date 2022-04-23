@@ -3,10 +3,10 @@ use crate::vec3::Vec3;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Ray {
-    pub origin: Vec3,
-    pub direction: Vec3,
-    pub tmin: Real,
-    pub tmax: Real,
+    pub origin: Vec3,    // ray origin
+    pub direction: Vec3, // ray direction
+    pub tmin: Real,      // minimum hittable distance
+    pub tmax: Real,      // maximum hittable distance
 }
 
 impl Ray {
@@ -26,17 +26,17 @@ impl Ray {
 
 #[derive(Debug, PartialEq)]
 pub struct IntersectInfoLocal {
-    pub t: Real,
-    pub pos: Vec3,
-    pub normal: Vec3,
+    pub t: Real,      // distance to hit point
+    pub pos: Vec3,    // hit position
+    pub normal: Vec3, // hit normal
 }
 
 #[derive(Debug, PartialEq)]
 pub struct IntersectInfoGlobal {
-    pub t: Real,
-    pub pos: Vec3,
-    pub normal: Vec3,
-    pub prim_idx: u32,
+    pub t: Real,       // distance to hit point
+    pub pos: Vec3,     // hit position
+    pub normal: Vec3,  // hit normal
+    pub prim_idx: u32, // index of hit primitive
 }
 
 #[derive(Debug, PartialEq)]

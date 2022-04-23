@@ -2,6 +2,8 @@ use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssi
 
 use crate::types::Real;
 
+// NOTE: y-up, (+x, +y, -z)
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Vec3 {
     elements: [Real; 3],
