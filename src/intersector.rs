@@ -1,13 +1,13 @@
 use crate::core::{IntersectInfoGlobal, IntersectableGlobal, IntersectableLocal, Ray};
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 pub struct Intersector {
-    intersectables: Rc<Vec<Box<dyn IntersectableLocal>>>,
+    intersectables: Arc<Vec<Box<dyn IntersectableLocal + Send + Sync>>>,
 }
 
 impl Intersector {
-    pub fn new(intersectables: Rc<Vec<Box<dyn IntersectableLocal>>>) -> Self {
+    pub fn new(intersectables: Arc<Vec<Box<dyn IntersectableLocal + Send + Sync>>>) -> Self {
         Intersector { intersectables }
     }
 }

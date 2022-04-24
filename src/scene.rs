@@ -3,7 +3,7 @@ use crate::core::{IntersectInfoGlobal, IntersectableGlobal, IntersectableLocal, 
 use crate::intersector::Intersector;
 use crate::vec3::{build_orthonormal_basis, Vec3};
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct Material {
@@ -24,18 +24,21 @@ impl Material {
 
 // TODO: make intersector selectable
 pub struct Scene {
-    _primitives: Rc<Vec<Box<dyn IntersectableLocal>>>,
+    _primitives: Arc<Vec<Box<dyn IntersectableLocal + Send + Sync>>>,
     materials: Vec<Material>,
     intersector: Intersector,
 }
 
 impl Scene {
-    pub fn new(primitives: Vec<Box<dyn IntersectableLocal>>, materials: Vec<Material>) -> Self {
+    pub fn new(
+        primitives: Vec<Box<dyn IntersectableLocal + Send + Sync>>,
+        materials: Vec<Material>,
+    ) -> Self {
         if primitives.len() != materials.len() {
             panic!("number of primitives does not equal to the number of materials.");
         }
 
-        let primitives = Rc::new(primitives);
+        let primitives = Arc::new(primitives);
         Scene {
             _primitives: primitives.clone(),
             materials,
