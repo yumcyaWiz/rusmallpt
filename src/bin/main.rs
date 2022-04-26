@@ -1,6 +1,5 @@
 use std::f32::consts::{FRAC_PI_2, FRAC_PI_4};
 use std::sync::{Arc, Mutex};
-use std::thread;
 
 use rusmallpt::camera::{Camera, PinholeCamera};
 use rusmallpt::core::IntersectableLocal;
@@ -210,56 +209,51 @@ fn main() {
 
     let integrator = Arc::new(PathTracingIntegrator::new(max_depth));
 
-    // let pool = rayon::ThreadPoolBuilder::new()
-    //     .num_threads(16)
-    //     .build()
-    //     .unwrap();
+    let pool = rayon::ThreadPoolBuilder::new()
+        .num_threads(16)
+        .build()
+        .unwrap();
 
-    let mut handles = vec![];
+    pool.scope(|s| {
+        for i in 0..height {
+            for j in 0..width {
+                let (image, camera, scene, integrator) = (
+                    image.clone(),
+                    camera.clone(),
+                    scene.clone(),
+                    integrator.clone(),
+                );
 
-    for i in 0..height {
-        for j in 0..width {
-            let (image, camera, scene, integrator) = (
-                image.clone(),
-                camera.clone(),
-                scene.clone(),
-                integrator.clone(),
-            );
+                s.spawn(move |_| {
+                    // init sampler
+                    let seed = j + width * i;
+                    let mut sampler = Sampler::new(seed as u64);
+                    // warmup
+                    for _k in 0..n_samples {
+                        sampler.next_1d();
+                    }
 
-            let handle = thread::spawn(move || {
-                // init sampler
-                let seed = j + width * i;
-                let mut sampler = Sampler::new(seed as u64);
-                // warmup
-                for _k in 0..n_samples {
-                    sampler.next_1d();
-                }
+                    let width = width as Real;
+                    let height = height as Real;
+                    let mut radiance = Vec3::new(0.0, 0.0, 0.0);
+                    for _k in 0..n_samples {
+                        // generate initial ray from camera
+                        let uv = Vec2::new(
+                            (2.0 * (j as Real + sampler.next_1d()) - width) / height,
+                            (2.0 * (i as Real + sampler.next_1d()) - height) / height,
+                        );
+                        let ray = camera.sample_ray(uv, &mut sampler);
 
-                let width = width as Real;
-                let height = height as Real;
-                let mut radiance = Vec3::new(0.0, 0.0, 0.0);
-                for _k in 0..n_samples {
-                    // generate initial ray from camera
-                    let uv = Vec2::new(
-                        (2.0 * (j as Real + sampler.next_1d()) - width) / height,
-                        (2.0 * (i as Real + sampler.next_1d()) - height) / height,
-                    );
-                    let ray = camera.sample_ray(uv, &mut sampler);
+                        // compute radiance by integrator
+                        radiance += integrator.integrate(&scene, &mut sampler, &ray);
+                    }
+                    radiance /= n_samples as Real;
 
-                    // compute radiance by integrator
-                    radiance += integrator.integrate(&scene, &mut sampler, &ray);
-                }
-                radiance /= n_samples as Real;
-
-                image.lock().unwrap().set_pixel(i, j, radiance);
-            });
-            handles.push(handle);
+                    image.lock().unwrap().set_pixel(i, j, radiance);
+                });
+            }
         }
-    }
-
-    for handle in handles {
-        handle.join().unwrap();
-    }
+    });
 
     image.lock().unwrap().gamma_correction();
     image.lock().unwrap().write_ppm();
