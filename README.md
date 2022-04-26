@@ -2,7 +2,7 @@
 
 Minimal but extensible implementation of path tracing in Rust.
 
-![](img/test2_100spp.png)
+![](img/cornellbox_10000spp.png)
 
 ## Build
 
@@ -29,3 +29,4 @@ You can consider adding following features.
 ## Externals
 
 * [rand](https://docs.rs/rand/latest/rand/)
+* [rayon](https://github.com/rayon-rs/rayon)
