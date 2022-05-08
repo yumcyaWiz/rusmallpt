@@ -1,6 +1,6 @@
 # rusmallpt
 
-Minimal but extensible implementation of path tracing in Rust.
+Minimal, extensible path tracer in Rust.
 
 ![](img/cornellbox_10000spp.png)
 
