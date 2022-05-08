@@ -1,4 +1,4 @@
-use crate::bxdf::{BxDF, Lambert};
+use crate::bxdf::Lambert;
 use crate::core::{IntersectInfoGlobal, IntersectableGlobal, IntersectableLocal, Ray, ShadingInfo};
 use crate::intersector::Intersector;
 use crate::vec3::{build_orthonormal_basis, Vec3};
@@ -67,9 +67,9 @@ impl Scene {
         }
     }
 
-    pub fn get_bxdf(&self, prim_idx: u32) -> Box<dyn BxDF> {
+    pub fn get_bxdf(&self, prim_idx: u32) -> Lambert {
         let material = &self.materials[prim_idx as usize];
-        Box::new(Lambert::new(material.diffuse))
+        Lambert::new(material.diffuse)
     }
 }
 

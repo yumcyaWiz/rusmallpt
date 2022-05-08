@@ -4,7 +4,7 @@ use std::sync::{Arc, Mutex};
 use rusmallpt::camera::{Camera, PinholeCamera};
 use rusmallpt::core::IntersectableLocal;
 use rusmallpt::image::Image;
-use rusmallpt::integrator::{Integrator, NormalIntegrator, PathTracingIntegrator};
+use rusmallpt::integrator::{Integrator, PathTracingIntegrator};
 use rusmallpt::sampler::Sampler;
 use rusmallpt::scene::{Material, Scene};
 use rusmallpt::shape::{Plane, Sphere};

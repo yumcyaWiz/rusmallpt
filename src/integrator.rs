@@ -1,3 +1,4 @@
+use crate::bxdf::BxDF;
 use crate::core::{IntersectableGlobal, Ray};
 use crate::sampler::Sampler;
 use crate::scene::Scene;
