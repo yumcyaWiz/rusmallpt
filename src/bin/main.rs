@@ -2,11 +2,11 @@ use std::f32::consts::{FRAC_PI_2, FRAC_PI_4};
 use std::sync::{Arc, Mutex};
 
 use rusmallpt::camera::{Camera, PinholeCamera};
-use rusmallpt::core::IntersectableLocal;
 use rusmallpt::image::Image;
 use rusmallpt::integrator::{Integrator, PathTracingIntegrator};
 use rusmallpt::sampler::Sampler;
 use rusmallpt::scene::{Material, Scene};
+use rusmallpt::shape::Shape;
 use rusmallpt::shape::{Plane, Sphere};
 use rusmallpt::types::Real;
 use rusmallpt::vec2::Vec2;
@@ -19,16 +19,15 @@ fn simple_scene() -> (PinholeCamera, Scene) {
         FRAC_PI_2,
     );
 
-    let sphere1 = Box::new(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0));
-    let sphere2 = Box::new(Sphere::new(Vec3::new(-1.5, 0.0, -1.5), 1.0));
-    let sphere3 = Box::new(Sphere::new(Vec3::new(1.5, 0.0, 1.5), 1.0));
-    let floor = Box::new(Plane::new(
+    let sphere1 = Shape::Sphere(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0));
+    let sphere2 = Shape::Sphere(Sphere::new(Vec3::new(-1.5, 0.0, -1.5), 1.0));
+    let sphere3 = Shape::Sphere(Sphere::new(Vec3::new(1.5, 0.0, 1.5), 1.0));
+    let floor = Shape::Plane(Plane::new(
         Vec3::new(-3.0, -1.0, 3.0),
         Vec3::new(6.0, 0.0, 0.0),
         Vec3::new(0.0, 0.0, -6.0),
     ));
-    let primitives: Vec<Box<dyn IntersectableLocal + Send + Sync>> =
-        vec![sphere1, sphere2, sphere3, floor];
+    let primitives: Vec<Shape> = vec![sphere1, sphere2, sphere3, floor];
 
     let materials: Vec<Material> = vec![
         Material::new(
@@ -63,91 +62,91 @@ fn cornellbox_scene() -> (PinholeCamera, Scene) {
         FRAC_PI_4,
     );
 
-    let floor = Box::new(Plane::new(
+    let floor = Shape::Plane(Plane::new(
         Vec3::new(0.0, 0.0, 0.0),
         Vec3::new(0.0, 0.0, 559.2),
         Vec3::new(556.0, 0.0, 0.0),
     ));
-    let right_wall = Box::new(Plane::new(
+    let right_wall = Shape::Plane(Plane::new(
         Vec3::new(0.0, 0.0, 0.0),
         Vec3::new(0.0, 548.8, 0.0),
         Vec3::new(0.0, 0.0, 559.2),
     ));
-    let left_wall = Box::new(Plane::new(
+    let left_wall = Shape::Plane(Plane::new(
         Vec3::new(556.0, 0.0, 0.0),
         Vec3::new(0.0, 0.0, 559.2),
         Vec3::new(0.0, 548.8, 0.0),
     ));
-    let ceil = Box::new(Plane::new(
+    let ceil = Shape::Plane(Plane::new(
         Vec3::new(0.0, 548.8, 0.0),
         Vec3::new(556.0, 0.0, 0.0),
         Vec3::new(0.0, 0.0, 559.2),
     ));
-    let back_wall = Box::new(Plane::new(
+    let back_wall = Shape::Plane(Plane::new(
         Vec3::new(0.0, 0.0, 559.2),
         Vec3::new(0.0, 548.8, 0.0),
         Vec3::new(556.0, 0.0, 0.0),
     ));
 
-    let short_box1 = Box::new(Plane::new(
+    let short_box1 = Shape::Plane(Plane::new(
         Vec3::new(130.0, 165.0, 65.0),
         Vec3::new(-48.0, 0.0, 160.0),
         Vec3::new(160.0, 0.0, 49.0),
     ));
-    let short_box2 = Box::new(Plane::new(
+    let short_box2 = Shape::Plane(Plane::new(
         Vec3::new(290.0, 0.0, 114.0),
         Vec3::new(0.0, 165.0, 0.0),
         Vec3::new(-50.0, 0.0, 158.0),
     ));
-    let short_box3 = Box::new(Plane::new(
+    let short_box3 = Shape::Plane(Plane::new(
         Vec3::new(130.0, 0.0, 65.0),
         Vec3::new(0.0, 165.0, 0.0),
         Vec3::new(160.0, 0.0, 49.0),
     ));
-    let short_box4 = Box::new(Plane::new(
+    let short_box4 = Shape::Plane(Plane::new(
         Vec3::new(82.0, 0.0, 225.0),
         Vec3::new(0.0, 165.0, 0.0),
         Vec3::new(48.0, 0.0, -160.0),
     ));
-    let short_box5 = Box::new(Plane::new(
+    let short_box5 = Shape::Plane(Plane::new(
         Vec3::new(240.0, 0.0, 272.0),
         Vec3::new(0.0, 165.0, 0.0),
         Vec3::new(-158.0, 0.0, -47.0),
     ));
 
-    let tall_box1 = Box::new(Plane::new(
+    let tall_box1 = Shape::Plane(Plane::new(
         Vec3::new(423.0, 330.0, 247.0),
         Vec3::new(-158.0, 0.0, 49.0),
         Vec3::new(49.0, 0.0, 159.0),
     ));
-    let tall_box2 = Box::new(Plane::new(
+    let tall_box2 = Shape::Plane(Plane::new(
         Vec3::new(423.0, 0.0, 247.0),
         Vec3::new(0.0, 330.0, 0.0),
         Vec3::new(49.0, 0.0, 159.0),
     ));
-    let tall_box3 = Box::new(Plane::new(
+    let tall_box3 = Shape::Plane(Plane::new(
         Vec3::new(472.0, 0.0, 406.0),
         Vec3::new(0.0, 330.0, 0.0),
         Vec3::new(-158.0, 0.0, 50.0),
     ));
-    let tall_box4 = Box::new(Plane::new(
+    let tall_box4 = Shape::Plane(Plane::new(
         Vec3::new(314.0, 0.0, 456.0),
         Vec3::new(0.0, 330.0, 0.0),
         Vec3::new(-49.0, 0.0, -160.0),
     ));
-    let tall_box5 = Box::new(Plane::new(
+    let tall_box5 = Shape::Plane(Plane::new(
         Vec3::new(265.0, 0.0, 296.0),
         Vec3::new(0.0, 330.0, 0.0),
         Vec3::new(158.0, 0.0, -49.0),
     ));
 
-    let light = Box::new(Plane::new(
+    let light = Shape::Plane(Plane::new(
         Vec3::new(343.0, 548.6, 227.0),
         Vec3::new(-130.0, 0.0, 0.0),
         Vec3::new(0.0, 0.0, 105.0),
     ));
 
-    let primitives: Vec<Box<dyn IntersectableLocal + Send + Sync>> = vec![
+    let primitives: Vec<Shape> = vec![
         floor, right_wall, left_wall, ceil, back_wall, short_box1, short_box2, short_box3,
         short_box4, short_box5, tall_box1, tall_box2, tall_box3, tall_box4, tall_box5, light,
     ];

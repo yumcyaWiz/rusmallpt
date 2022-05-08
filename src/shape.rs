@@ -1,4 +1,4 @@
-use crate::core::{IntersectInfoLocal, IntersectableLocal, Ray};
+use crate::core::{IntersectInfoLocal, Ray};
 use crate::types::Real;
 use crate::vec3::Vec3;
 
@@ -11,9 +11,7 @@ impl Sphere {
     pub fn new(center: Vec3, radius: Real) -> Self {
         Sphere { center, radius }
     }
-}
 
-impl IntersectableLocal for Sphere {
     fn intersect(&self, ray: &Ray) -> Option<IntersectInfoLocal> {
         let b = (ray.origin - self.center).dot(ray.direction);
         let c = (ray.origin - self.center).length2() - self.radius * self.radius;
@@ -61,9 +59,7 @@ impl Plane {
             up_dir_length: up.length(),
         }
     }
-}
 
-impl IntersectableLocal for Plane {
     fn intersect(&self, ray: &Ray) -> Option<IntersectInfoLocal> {
         let t = -(ray.origin - self.center).dot(self.normal) / ray.direction.dot(self.normal);
         if t < ray.tmin || t > ray.tmax {
@@ -82,6 +78,20 @@ impl IntersectableLocal for Plane {
             pos,
             normal: self.normal,
         })
+    }
+}
+
+pub enum Shape {
+    Sphere(Sphere),
+    Plane(Plane),
+}
+
+impl Shape {
+    pub fn intersect(&self, ray: &Ray) -> Option<IntersectInfoLocal> {
+        match self {
+            Shape::Sphere(sphere) => sphere.intersect(ray),
+            Shape::Plane(plane) => plane.intersect(ray),
+        }
     }
 }
 

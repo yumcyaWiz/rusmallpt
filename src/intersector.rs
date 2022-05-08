@@ -1,14 +1,15 @@
-use crate::core::{IntersectInfoGlobal, IntersectableGlobal, IntersectableLocal, Ray};
+use crate::core::{IntersectInfoGlobal, IntersectableGlobal, Ray};
+use crate::shape::Shape;
 
 use std::sync::Arc;
 
 pub struct Intersector {
-    intersectables: Arc<Vec<Box<dyn IntersectableLocal + Send + Sync>>>,
+    shapes: Arc<Vec<Shape>>,
 }
 
 impl Intersector {
-    pub fn new(intersectables: Arc<Vec<Box<dyn IntersectableLocal + Send + Sync>>>) -> Self {
-        Intersector { intersectables }
+    pub fn new(shapes: Arc<Vec<Shape>>) -> Self {
+        Intersector { shapes }
     }
 }
 
@@ -16,8 +17,8 @@ impl IntersectableGlobal for Intersector {
     fn intersect(&self, ray: &Ray) -> Option<IntersectInfoGlobal> {
         let mut t = ray.tmax;
         let mut info: Option<IntersectInfoGlobal> = None;
-        for (idx, intersectable) in self.intersectables.iter().enumerate() {
-            if let Some(surf_info) = intersectable.intersect(ray) {
+        for (idx, shape) in self.shapes.iter().enumerate() {
+            if let Some(surf_info) = shape.intersect(ray) {
                 if surf_info.t < t {
                     t = surf_info.t;
                     info = Some(IntersectInfoGlobal {

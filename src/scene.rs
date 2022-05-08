@@ -1,6 +1,7 @@
 use crate::bxdf::Lambert;
-use crate::core::{IntersectInfoGlobal, IntersectableGlobal, IntersectableLocal, Ray, ShadingInfo};
+use crate::core::{IntersectInfoGlobal, IntersectableGlobal, Ray, ShadingInfo};
 use crate::intersector::Intersector;
+use crate::shape::Shape;
 use crate::vec3::{build_orthonormal_basis, Vec3};
 
 use std::sync::Arc;
@@ -24,16 +25,13 @@ impl Material {
 
 // TODO: make intersector selectable
 pub struct Scene {
-    _primitives: Arc<Vec<Box<dyn IntersectableLocal + Send + Sync>>>,
+    _primitives: Arc<Vec<Shape>>,
     materials: Vec<Material>,
     intersector: Intersector,
 }
 
 impl Scene {
-    pub fn new(
-        primitives: Vec<Box<dyn IntersectableLocal + Send + Sync>>,
-        materials: Vec<Material>,
-    ) -> Self {
+    pub fn new(primitives: Vec<Shape>, materials: Vec<Material>) -> Self {
         if primitives.len() != materials.len() {
             panic!("number of primitives does not equal to the number of materials.");
         }

@@ -48,11 +48,6 @@ pub struct ShadingInfo {
     pub b: Vec3,  // bitangent vector
 }
 
-// NOTE: local means it doesn't contain hit primitive index
-pub trait IntersectableLocal {
-    fn intersect(&self, ray: &Ray) -> Option<IntersectInfoLocal>;
-}
-
 // NOTE: global means it contains hit primitive index
 pub trait IntersectableGlobal {
     fn intersect(&self, ray: &Ray) -> Option<IntersectInfoGlobal>;
